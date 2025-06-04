@@ -10,8 +10,7 @@ margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
-    display: flex
-;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -130,7 +129,7 @@ background-color: #4CAF50;
 @media (max-width: 700px) {
     .choose-vehicle {
         width: 98%;
-        grid-template-columns: repeat(2, 1fr); /* Change from 1fr to 2 columns */
+        grid-template-columns: repeat(2, 1fr); 
         gap: 16px;
         padding: 10px;
         border-radius: 20px;
@@ -220,6 +219,10 @@ background-color: #4CAF50;
     background-color: #ccc;
     margin: 4px;
     border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
 }
 .card-seat.selected {
     background-color: #4CAF50;
@@ -239,7 +242,7 @@ width: 70%;
     justify-content: space-around;
     gap: 10px;
 }
-input[type="text"]
+input
 {
     width: 100%;
     padding: 10px;
@@ -256,4 +259,27 @@ input[type="text"]
     border-radius: 4px;
     cursor: pointer;
     
+}
+
+.card-seat.disabled {
+    background-color: transparent !important;
+    border: red 2px solid;
+    color: #fff;
+    opacity: 0.6;
+    position: relative;
+}
+.card-seat.disabled::after {
+    content: "X";
+    color: red;
+    font-size: 2em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.driver
+{
+    pointer-events: none;
 }
