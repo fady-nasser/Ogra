@@ -5,47 +5,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome!</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/2707d1b038.js" crossorigin="anonymous"></script>
 </head>
 <body>
-                <div class="input">
-            <p>Price:</p> <input type="number" name="price" id="">
-            
-            <div class="button">Calculate</div>
-        </div>
-<div class="container">
-
-    <div class="front">
-        <div class="card-seat driver disabled"></div>
-        <div class="front-seats">
-            <div class="card-seat"></div>
-            <div class="card-seat"></div>
-        </div>
-    </div>
-    <p> ---------------------- </p>
-    <div class="body">
-        <div class="row">
-            <div class="card-seat"></div>
-            <div class="card-seat"></div>
-            <div class="card-seat"></div>
-        </div>
-                <div class="row">
-            <div class="card-seat"></div>
-            <div class="card-seat"></div>
-            <div class="card-seat"></div>
-        </div>
-                <div class="row">
-            <div class="card-seat"></div>
-            <div class="card-seat"></div>
-            <div class="card-seat"></div>
-        </div>
-
+    <!-- Top navigation bar -->
+    <div class="top">
+        <a href="choose.html" class="back"><i class="fa-solid fa-arrow-left"></i></a>
+        <select name="type" id="">
+            <option value="8">8-seats</option>
+            <option value="11">11-seats</option>
+            <option value="25">25-seats</option>
+        </select>
     </div>
 
-</div>
-            <div class="input">
-            <input type="number" name="money" id="">
-            <div class="button">Ok</div>
+    <!-- Input for fare -->
+    <div class="input">
+        <input type="number" name="fare" id="" placeholder="Fare...">
+    </div>
+
+    <!-- Main container for seats -->
+    <div class="container">
+        <!-- Front row (driver and front seats) -->
+        <div class="row front">
+            <div class="card-seat driver disabled"></div>
+            <!-- Example: front seats as input fields -->
+            <input type="number" class="card-seat">
+            <input type="number" class="card-seat">
         </div>
-            <script src="trip.js"></script>
-        </body>
+        <p>----------------------</p>
+        <!-- Body rows with card seats -->
+        <div class="body">
+            <div class="row">
+                <div class="card-seat" data-money="2,0,5,100,0,0,0,0,0"></div>
+                <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+                <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+                <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+            </div>
+            <div class="row">
+                <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+                <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+                <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+                <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+            </div>
+            <div class="row">
+                <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+                <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+                <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+                <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal backdrop for menu -->
+    <div class="backdrop"></div>
+
+    <!-- Menu modal for assigning money to seats -->
+    <div class="menu">
+        <div class="close">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <!-- Coin/amount selectors -->
+        <div class="quarter">
+            <p>quarter</p>
+            <div class="amount">
+                <div class="more"><i class="fa-solid fa-plus"></i></div>
+                <p class="number">1</p>
+                <div class="less"><i class="fa-solid fa-minus"></i></div>
+            </div>
+        </div>
+        <div class="half">
+            <p>half</p>
+            <div class="amount">
+                <div class="more"><i class="fa-solid fa-plus"></i></div>
+                <p class="number">1</p>
+                <div class="less"><i class="fa-solid fa-minus"></i></div>
+            </div>
+        </div>
+        <div class="one">
+            <p>one</p>
+            <div class="amount">
+                <div class="more"><i class="fa-solid fa-plus"></i></div>
+                <p class="number">1</p>
+                <div class="less"><i class="fa-solid fa-minus"></i></div>
+            </div>
+        </div>
+        <div class="five">
+            <p>5</p>
+            <div class="amount">
+                <div class="more"><i class="fa-solid fa-plus"></i></div>
+                <p class="number">1</p>
+                <div class="less"><i class="fa-solid fa-minus"></i></div>
+            </div>
+        </div>
+        <div class="ten">
+            <p>10</p>
+            <div class="amount">
+                <div class="more"><i class="fa-solid fa-plus"></i></div>
+                <p class="number">1</p>
+                <div class="less"><i class="fa-solid fa-minus"></i></div>
+            </div>
+        </div>
+        <div class="twenty">
+            <p>20</p>
+            <div class="amount">
+                <div class="more"><i class="fa-solid fa-plus"></i></div>
+                <p class="number">1</p>
+                <div class="less"><i class="fa-solid fa-minus"></i></div>
+            </div>
+        </div>
+        <div class="fifty">
+            <p>50</p>
+            <div class="amount">
+                <div class="more"><i class="fa-solid fa-plus"></i></div>
+                <p class="number">1</p>
+                <div class="less"><i class="fa-solid fa-minus"></i></div>
+            </div>
+        </div>
+        <div class="hundred">
+            <p>100</p>
+            <div class="amount">
+                <div class="more"><i class="fa-solid fa-plus"></i></div>
+                <p class="number">1</p>
+                <div class="less"><i class="fa-solid fa-minus"></i></div>
+            </div>
+        </div>
+        <div class="twohundred">
+            <p>200</p>
+            <div class="amount">
+                <div class="more"><i class="fa-solid fa-plus"></i></div>
+                <p class="number">1</p>
+                <div class="less"><i class="fa-solid fa-minus"></i></div>
+            </div>
+        </div>
+        <!-- Add button -->
+        <div class="add button">Add</div>
+    </div>
+
+    <!-- JS -->
+    <script src="trip.js"></script>
+</body>
 </html>
