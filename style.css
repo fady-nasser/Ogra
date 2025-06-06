@@ -255,6 +255,14 @@ h1 {
     transform: translate(-50%, -50%);
     pointer-events: none;
 }
+.suggested {
+    background-color: #fff3cd !important; /* Light yellow */
+    border: 2px dashed orange;
+}
+
+.confirmed {
+    background-color: #c3e6cb !important; /* Light green */
+}
 .driver {
     pointer-events: none;
 }
