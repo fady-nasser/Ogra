@@ -231,6 +231,7 @@ h1 {
     position: relative;
     transition: border 0.3s, background 0.3s;
     flex-direction: column;
+
 }
 .card-seat.selected {
     border: 2px solid #4CAF50;
@@ -263,6 +264,15 @@ h1 {
 /* make a beating animation for the suggested div */
 .suggested {
     animation: beat 1s infinite;
+    -webkit-animation: beat 1s infinite;
+}
+@-webkit-keyframes beat {
+    0%, 100% {
+        -webkit-transform: scale(1);
+    }
+    50% {
+        -webkit-transform: scale(1.05);
+    }
 }
 @keyframes beat {
     0%, 100% {
@@ -400,4 +410,11 @@ input.card-seat {
 .backdrop.show {
     visibility: visible;
     transition: 0.5s ease-in-out;
+}
+
+.unselectable {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
