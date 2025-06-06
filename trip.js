@@ -2,26 +2,24 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- DOM ELEMENTS ---
     let lastSelectedSeat = null;
-    const seats = document.querySelectorAll('.card-seat:not(.driver)'); // All seat elements except driver
-    const input = document.querySelector('input[name="fare"]'); // Fare input field
-    const less_btns = document.querySelectorAll('.less'); // All "less" buttons
-    const more_btns = document.querySelectorAll('.more'); // All "more" buttons
-    const menu = document.querySelector('.menu'); // The seat menu/modal
-    const backdrop = document.querySelector('.backdrop'); // The modal backdrop
-    const close = document.querySelector('.close'); // The close button for the menu
-    const amounts = document.querySelectorAll(".menu>div:not(.close) .number"); // All amount fields in the menu
-    const add_btn = document.querySelector('.add'); // The add/confirm button in the menu
+    const seats = document.querySelectorAll('.card-seat:not(.driver)');
+    const input = document.querySelector('input[name="fare"]');
+    const less_btns = document.querySelectorAll('.less');
+    const more_btns = document.querySelectorAll('.more');
+    const menu = document.querySelector('.menu');
+    const backdrop = document.querySelector('.backdrop');
+    const close = document.querySelector('.close');
+    const amounts = document.querySelectorAll(".menu>div:not(.close) .number");
+    const add_btn = document.querySelector('.add');
 
     // --- CONSTANTS ---
-    const money_values = [0.25, 0.5, 1, 5, 10, 20, 50, 100, 200]; // Coin/note values
+    const money_values = [0.25, 0.5, 1, 5, 10, 20, 50, 100, 200];
 
     // --- STATE ---
     let seat_change_needs = [];
-    let total_money = [];
-    let lastTap = 0;
+    let suggestedSeats = new Set();
     let tapTimeout = null;
-
-    
+    let coins_to_give_per_seat = [];
 
     // --- UTILITY FUNCTIONS ---
 
@@ -34,6 +32,36 @@ document.addEventListener("DOMContentLoaded", () => {
     // Calculate the total money value from a money array
     function change_to_money(money_array) {
         return money_array.reduce((sum, count, index) => sum + count * money_values[index], 0);
+    }
+
+    // Get the total available change from all seats
+    function get_total_available_change() {
+        let money_arrays = Array.from(seats).map(s => s.dataset.money.split(',').map(Number));
+        let total = new Array(money_values.length).fill(0);
+        money_arrays.forEach(array => {
+            array.forEach((val, i) => total[i] += val);
+        });
+        return total;
+    }
+
+    // --- CONFIRM SUGGESTION FUNCTION ---
+    function confirmSuggestion(index) {
+        let seat = seats[index];
+        seat.classList.remove('suggested');
+        seat.classList.add('confirmed');
+        seat_change_needs[index] = 0;
+
+        // Subtract the given coins from the seat's dataset.money
+        let current_money = seat.dataset.money.split(',').map(Number);
+        let given = coins_to_give_per_seat[index];
+        let new_money = current_money.map((val, i) => val - given[i]);
+        seat.dataset.money = new_money.join(',');
+
+        // Update the seat's display
+        seat.textContent = change_to_money(new_money);
+
+        // Recalculate with updated data
+        calculate(get_total_available_change());
     }
 
     // --- MAIN UPDATE FUNCTION ---
@@ -70,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 seat_change_needs[i] = change_needed < 0 ? 0 : change_needed;
             });
             console.log("Seat change needs: " + seat_change_needs);
-            calculate(total_change);
+            calculate(total_change); // Run greedy calculation
         } else {
             input.classList.add('error');
             input.addEventListener('input', function () {
@@ -81,60 +109,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- GREEDY CHANGE DISTRIBUTION ---
     function calculate(total_change_array) {
-        let coins_available = [...total_change_array]; // Copy of available coins
-        let coins_to_give_per_seat = Array.from(seats).map(() => new Array(money_values.length).fill(0));
-        let seat_needs = [...seat_change_needs]; // Copy to mutate
+        let coins_available = [...total_change_array];
+        let seat_needs = [...seat_change_needs];
+        suggestedSeats.clear();
 
-        // For each seat, try to fulfill as much of its need as possible
-        seat_needs.forEach((need, seatIndex) => {
-            let amount_needed = need;
+        seats.forEach((seat, seatIndex) => {
+            let amount_needed = seat_needs[seatIndex];
             let coins_to_give = new Array(money_values.length).fill(0);
+            let temp_coins_available = [...coins_available];
+            let temp_amount = amount_needed;
 
+            // Try to give the largest denominations first
             for (let i = money_values.length - 1; i >= 0; i--) {
-                // Give as much as possible, but never more than needed or available
-                let max_coins = Math.floor(amount_needed / money_values[i]);
-                let coins = Math.min(max_coins, coins_available[i]);
+                let max_coins = Math.floor(temp_amount / money_values[i]);
+                let coins = Math.min(max_coins, temp_coins_available[i]);
                 if (coins > 0) {
                     coins_to_give[i] = coins;
-                    amount_needed -= coins * money_values[i];
-                    amount_needed = Math.round(amount_needed * 100) / 100; // Fix precision
-                    coins_available[i] -= coins;
+                    temp_amount -= coins * money_values[i];
+                    temp_coins_available[i] -= coins;
+                    console.log(temp_amount + " aaaaaaaaaaaa " + Math.round(temp_amount * 100) / 100);
                 }
             }
 
+            // If full change can be given, mark as confirmed
+            if (temp_amount + 1 < 0.01) {
+                coins_to_give.forEach((val, i) => coins_available[i] -= val);
+                coins_to_give_per_seat[seatIndex] = coins_to_give;
+                seat.classList.remove('suggested');
+                seat.classList.add('confirmed');
+            } else if (change_to_money(coins_to_give) > 0) {
+                // Partial change is possible — suggest
+                suggestedSeats.add(seatIndex);
+                seat.classList.add('suggested');
+                seat.classList.remove('confirmed');
+                seat.childNodes[1]?.remove(); // Remove previous give div if exists
+
+                let give_div = document.createElement('div');
+                give_div.innerText = "Give: " + change_to_money(coins_to_give);
+                seat.appendChild(give_div);
+            } else {
+                // No change possible
+                seat.classList.remove('suggested');
+                seat.classList.remove('confirmed');
+            }
             coins_to_give_per_seat[seatIndex] = coins_to_give;
-            seat_needs[seatIndex] = amount_needed; // Update remaining need for this seat
         });
 
-        // If there is still need left, try to redistribute coins from other seats
-        let needs_remaining = seat_needs.some(need => need > 0.001);
-        if (needs_remaining) {
-            for (let seatIndex = 0; seatIndex < seat_needs.length; seatIndex++) {
-                let amount_needed = seat_needs[seatIndex];
-                if (amount_needed < 0.01) continue;
-                for (let i = money_values.length - 1; i >= 0; i--) {
-                    if (coins_available[i] > 0 && amount_needed >= money_values[i]) {
-                        let max_coins = Math.floor(amount_needed / money_values[i]);
-                        let coins = Math.min(max_coins, coins_available[i]);
-                        if (coins > 0) {
-                            coins_to_give_per_seat[seatIndex][i] += coins;
-                            amount_needed -= coins * money_values[i];
-                            amount_needed = Math.round(amount_needed * 100) / 100;
-                            coins_available[i] -= coins;
-                            seat_needs[seatIndex] = amount_needed;
-                            if (amount_needed < 0.01) break;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Log results for debugging
-        console.log("Coins to give per seat:", coins_to_give_per_seat);
-        console.log("Unmet needs per seat:", seat_needs);
-        console.log("Remaining coins available:", coins_available);
-
-        // Show remaining money in the UI
+        // Log suggestions for debugging
+        console.log("Suggestions:", [...suggestedSeats]);
+        // Show remaining money in the UI (optional)
         input.nextElementSibling.textContent = change_to_money(coins_available);
     }
 
@@ -146,8 +169,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- SEAT EVENTS ---
-    seats.forEach(seat => {
-        seat.addEventListener('click', function (e) {
+    seats.forEach((seat, i) => {
+        // Long press to confirm suggestion (mouse)
+        seat.addEventListener('mousedown', function () {
+            if (!suggestedSeats.has(i)) return;
+            tapTimeout = setTimeout(() => {
+                confirmSuggestion(i);
+            }, 600);
+        });
+        seat.addEventListener('mouseup', () => {
+            clearTimeout(tapTimeout);
+        });
+        seat.addEventListener('mouseleave', () => {
+            clearTimeout(tapTimeout);
+        });
+
+        // Long press to confirm suggestion (touch)
+        seat.addEventListener('touchstart', function () {
+            if (!suggestedSeats.has(i)) return;
+            tapTimeout = setTimeout(() => {
+                confirmSuggestion(i);
+            }, 600);
+        });
+        seat.addEventListener('touchend', () => {
+            clearTimeout(tapTimeout);
+        });
+        seat.addEventListener('touchcancel', () => {
+            clearTimeout(tapTimeout);
+        });
+
+        // Open menu on click
+        seat.addEventListener('click', function () {
             if (seat.classList.contains('disabled')) return;
             seats.forEach(s => s.classList.remove('selected'));
             seat.classList.add('selected');
@@ -157,18 +209,6 @@ document.addEventListener("DOMContentLoaded", () => {
             update(seat);
         });
     });
-
-    // --- TOGGLE DISABLED STATE (OPTIONAL) ---
-    function toggleSeatDisabled(seat) {
-        if (seat.classList.contains('disabled')) {
-            seat.classList.remove('disabled');
-            seat.textContent = '';
-        } else {
-            seat.classList.add('disabled');
-            seat.classList.remove('selected');
-            seat.textContent = '';
-        }
-    }
 
     // --- AMOUNT BUTTON EVENTS ---
     less_btns.forEach(btn => {
@@ -192,4 +232,16 @@ document.addEventListener("DOMContentLoaded", () => {
             update(lastSelectedSeat);
         });
     });
+
+    // --- TOGGLE DISABLED STATE (OPTIONAL) ---
+    function toggleSeatDisabled(seat) {
+        if (seat.classList.contains('disabled')) {
+            seat.classList.remove('disabled');
+            seat.textContent = '';
+        } else {
+            seat.classList.add('disabled');
+            seat.classList.remove('selected');
+            seat.textContent = '';
+        }
+    }
 });

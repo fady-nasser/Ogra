@@ -227,9 +227,10 @@ h1 {
     justify-content: center;
     color: #fff;
     border: 2px solid transparent;
-    font-size: 1.2em;
+    font-size: 10px;
     position: relative;
     transition: border 0.3s, background 0.3s;
+    flex-direction: column;
 }
 .card-seat.selected {
     border: 2px solid #4CAF50;
@@ -259,7 +260,18 @@ h1 {
     background-color: #fff3cd !important; /* Light yellow */
     border: 2px dashed orange;
 }
-
+/* make a beating animation for the suggested div */
+.suggested {
+    animation: beat 1s infinite;
+}
+@keyframes beat {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
 .confirmed {
     background-color: #c3e6cb !important; /* Light green */
 }
