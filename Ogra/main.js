@@ -1,10 +1,10 @@
         //storage check for dark mode
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('darkMode') === 'enabled') {
-                document.documentElement.classList.add('dark-mode');
+                document.querySelector("html").classList.add('dark-mode');
                 
             } else {
-                document.documentElement.classList.remove('dark-mode');
+                document.querySelector("html").classList.remove('dark-mode');
                 
             }
         //     // creating routes
