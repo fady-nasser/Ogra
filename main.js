@@ -7,6 +7,7 @@
                 document.querySelector("html").classList.remove('dark-mode');
                 
             }
+            // test
         //     // creating routes
         // if(window.location.pathname === '/Ogra/'){
         
