@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome!</title>
+    <link rel="icon" href="/Ogra/images/bills/logo.png" type="image/x-icon">
+    <title>Trip</title>
     <link rel="stylesheet" href="trip.css">
     <!-- Font Awesome for icons -->
     <script src="https://kit.fontawesome.com/2707d1b038.js" crossorigin="anonymous"></script>
@@ -12,13 +13,14 @@
 <body class="trip">
     <!-- Top navigation bar -->
     <div class="top">
-        <div onclick="window.location.href='/Ogra/choose.html';" class="back"><i class="fa-solid fa-arrow-left"></i></div>
-        <select name="type" id="">
+        <div onclick="window.location.href='/Ogra/choose.html';" class="back primary"><i class="fa-solid fa-arrow-left"></i></div>
+        <select name="type" id="" class="primary">
             <option value="8">8-seats</option>
             <option value="14">14-seats</option>
-            <option value="25">25-seats</option>
         </select>
-        <div class="placeholder" style="width:14px"></div>
+        <div class="how-to primary" style="width:14px">
+            <i class="fa-solid fa-question"></i>
+        </div>
     </div>
 
     <!-- Input for fare -->
@@ -28,7 +30,9 @@
     </div>
     <div class="collected-div">
         <div class="collected-amount">Collected: 0 L.E</div>
-        <div class="down-icon">˅</div>
+        <div class="down-icon">
+            <img src="images/bills/downarrow.png" style="width: 10px;" alt="down arrow">
+        </div>
     </div>
     <div class="collected-details">
         <div class="bill">
@@ -69,37 +73,56 @@
         </div>
     </div>
     <div class="seats-container">
-        <div class="card-seat driver disabled"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
-        <div class="card-seat" data-money="0,0,0,0,0,0,0,0,0"></div>
+
         <div class="card-seat add" ></div>
     </div>
 
 
 
-    <!-- Modal backdrop for menu -->
-    <div class="backdrop"></div>
+  
 
-    <!-- Menu modal for assigning money to seats -->
-    <div class="menu">
-        <div class="close">
-            <i class="fa-solid fa-xmark"></i>
+
+
+
+
+            <div class="bottom-modal">
+      <div class="modal-overlay"></div>
+      <div class="content">
+        <div class="header">
+          <div class="drag-icon"><span></span></div>
         </div>
+        <div class="modal-body">
+          <h2>How to use?</h2>
+          <div class="how-row">
+            <div class="card-seat explain"></div>
+            <p>This means that there is no problem with this seat or it is not filled</p>
+          </div>
+            <div class="how-row">
+            <div class="card-seat explain disabled"></div>
+            <p>This means that the seat is disabled(e.g the driver's seat)</p>
+          </div>
+            <div class="how-row">
+            <div class="card-seat explain suggested"></div>
+            <p>This means that there is a suggested action to give change to someone</p>
+          </div>
+          </div>
+          </div>
+          </div>
+
+
+
+
+        <div class="menu-modal">
+      <div class="menu-overlay"></div>
+      <div class="content">
+        <div class="header">
+          <div class="drag-icon"><span></span></div>
+        </div>
+        <div class="modal-body">
+          <!-- <h2>How to use?</h2> -->
         <!-- Coin/amount selectors -->
         <div class="quarter">
-            <p>quarter</p>
+            <p><img src="images/bills/quarter.png" alt=""></p>
             <div class="amount">
                 <div class="more"><i class="fa-solid fa-plus"></i></div>
                 <p class="number">1</p>
@@ -107,7 +130,7 @@
             </div>
         </div>
         <div class="half">
-            <p>half</p>
+            <p><img src="images/bills/half.png" alt=""></p>
             <div class="amount">
                 <div class="more"><i class="fa-solid fa-plus"></i></div>
                 <p class="number">1</p>
@@ -115,7 +138,7 @@
             </div>
         </div>
         <div class="one">
-            <p>one</p>
+            <p><img src="images/bills/1.png" alt=""></p>
             <div class="amount">
                 <div class="more"><i class="fa-solid fa-plus"></i></div>
                 <p class="number">1</p>
@@ -123,7 +146,7 @@
             </div>
         </div>
         <div class="five">
-            <p>5</p>
+            <p><img src="images/bills/5.png" alt=""></p>
             <div class="amount">
                 <div class="more"><i class="fa-solid fa-plus"></i></div>
                 <p class="number">1</p>
@@ -131,7 +154,7 @@
             </div>
         </div>
         <div class="ten">
-            <p>10</p>
+            <p><img src="images/bills/10.png" alt=""></p>
             <div class="amount">
                 <div class="more"><i class="fa-solid fa-plus"></i></div>
                 <p class="number">1</p>
@@ -139,7 +162,7 @@
             </div>
         </div>
         <div class="twenty">
-            <p>20</p>
+            <p><img src="images/bills/20.png" alt=""></p>
             <div class="amount">
                 <div class="more"><i class="fa-solid fa-plus"></i></div>
                 <p class="number">1</p>
@@ -147,7 +170,7 @@
             </div>
         </div>
         <div class="fifty">
-            <p>50</p>
+            <p><img src="images/bills/50.png" alt=""></p>
             <div class="amount">
                 <div class="more"><i class="fa-solid fa-plus"></i></div>
                 <p class="number">1</p>
@@ -155,7 +178,7 @@
             </div>
         </div>
         <div class="hundred">
-            <p>100</p>
+            <p><img src="images/bills/100.png" alt=""></p>
             <div class="amount">
                 <div class="more"><i class="fa-solid fa-plus"></i></div>
                 <p class="number">1</p>
@@ -163,7 +186,7 @@
             </div>
         </div>
         <div class="twohundred">
-            <p>200</p>
+            <p><img src="images/bills/200.png" alt=""></p>
             <div class="amount">
                 <div class="more"><i class="fa-solid fa-plus"></i></div>
                 <p class="number">1</p>
@@ -172,8 +195,9 @@
         </div>
         <!-- Add button -->
         <div class="add button">Add</div>
-    </div>
-
+          </div>
+          </div>
+          </div>
     <!-- JS -->
     <script src="trip.js"></script>
 </body>

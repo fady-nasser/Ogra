@@ -3,34 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome!</title>
+    <link rel="icon" href="/Ogra/images/bills/logo.png" type="image/x-icon">
+    <title>Select</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/2707d1b038.js" crossorigin="anonymous"></script>
     <script src="main.js"></script>
 </head>
 <body class="choose">
-    <div class="top">
+    <div class="top primary">
         <div onclick="window.location.href='/Ogra/';" class="back">
             <i class="fa-solid fa-arrow-left"></i>
         </div>
     </div>
-    <h1>Type</h1>
+    <h1 class="primary">Type</h1>
     <div class="type-cards-container">
-        <div class="type-card" onclick="window.location.href='/Ogra/trip.html#8';">
-            <div class="img"></div>
+        <div class="type-card button" data-choice="8" onclick="//window.location.href='/Ogra/trip.html#8';">
+            <div class="img tomnaya">
+                <img src="/Ogra/images/bills/tomnaya.png" alt="tomnaya" srcset="">
+            </div>
             <h2>8-Seat</h2>
         </div>
-        <div class="type-card" onclick="window.location.href='/Ogra/trip.html#14';">
-            <div class="img"></div>
+        <div class="type-card button" data-choice="14" onclick="//window.location.href='/Ogra/trip.html#14';">
+            <div class="img">
+                 <img src="/Ogra/images/bills/microbus.png" alt="microbus" srcset="">
+            </div>
             <h2>14-Seat</h2>
         </div>
-        <div class="type-card" onclick="window.location.href='/Ogra/trip.html#25';">
-            <div class="img"></div>
-            <h2>25-Seat</h2>
-        </div>
     </div>
+    <div  class="select start-ride  button-disable">Confirm</div>
 
+    <script>
+        type_cards = document.querySelectorAll(".type-card");
+        select_btn = document.querySelector(".select");
+        let last_selected_card;
+        type_cards.forEach((card, i) => {
+        card.addEventListener("click", () =>
+        {
 
+            if(card.classList.contains("active"))
+            {
+                
+                select_btn.classList.add("button-disable");
+
+                card.classList.remove("active");
+                
+            }
+            else
+            {
+                            last_selected_card = card;
+            card.classList.add("active");
+                select_btn.classList.remove("button-disable");
+                if(type_cards[(i+1)%2].classList.contains("active"))
+            {
+                type_cards[(i+1)%2].classList.remove("active");
+            }
+               
+            }
+            
+        });
+
+        });
+        select_btn.addEventListener("click", () =>{
+                window.location.href= window.location.origin+ '/Ogra/trip.html#'+ last_selected_card.dataset.choice;
+            });
+    </script>
     <script src="app.js"></script>
 </body>
 </html>

@@ -11,9 +11,15 @@ html, body {
     min-height: 100vh;
     width: 100%;
     font-family: 'Poppins', sans-serif;
-    background-color: #EDEDED;
+            background-color: #ffeed3;
+    background-image:  linear-gradient(to bottom, transparent -300%, #ffeed3),url("/Ogra/images/bills/image2.png");
+    background-size: contain;
     margin: 0;
     padding: 0;
+}
+.primary
+{
+    color: #006A2A;
 }
 
 body {
@@ -27,7 +33,7 @@ html.dark-mode
 {
     filter: invert(1) hue-rotate(180deg);
 }
-.dark-check
+.dark-check, .how-to
 {
     position: absolute;
     top: 20px;
@@ -35,12 +41,17 @@ html.dark-mode
     z-index: 1000;
     width: 42px;
     height: 42px;
-    background-color: #E2E2E2;
+    background-color: #FED085;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     cursor: pointer;
+}
+.how-to
+{
+    right: 70px;
+
 }
 html.dark-mode .dark-check i 
 {
@@ -48,20 +59,23 @@ html.dark-mode .dark-check i
 
 }
 
-a.start-ride {
+.start-ride {
     text-decoration: none;
     padding: 20px 40px;
     margin: 5px;
     background-color: #E2E2E2;
     color: black;
     border-radius: 30px;
+    cursor: pointer;
 }
 
 .history
 {
     display: flex;
     flex-direction: column;
-    background-color: #E2E2E2;
+    background-color: #E47902;
+    background-image: url("/Ogra/images/bills/image3.png");
+    background-size: contain;
     border-radius: 38px;
     padding: 30px;
     max-width: 1100px;
@@ -71,6 +85,7 @@ a.start-ride {
 
 .history-title
 {
+    color: #FED085;
     display: flex;
     align-items: center;
     gap: 18px;
@@ -92,13 +107,25 @@ a.start-ride {
     display: flex;
     flex-direction: column;
     padding: 20px;
-    background-color: #D8D8D8;
+    background-color: #FED085;
+    border: 4px solid transparent;
     border-radius: 20px;
+    cursor: pointer;
+
+}
+.history-card:hover
+{
+    
+    border: 4px solid #F28808;
+            
+    background-image: url("/Ogra/images/bills/image2.png"); 
+    background-size: cover;
 }
 .history-card-type
 {
     font-size: 13px;
     font-weight: 500;
+    color: #E47902; 
 }
 .history-card-date
 {
@@ -135,13 +162,14 @@ body.choose h1
 } 
 .type-cards-container
 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 50% 50% ;
     width: 80%;
-    max-width: 1100px;
+    /* max-width: 500px; */
+    justify-content: center;
+    gap: 20px;
+    /* width: 80%;
+    max-width: 1100px; */
     
 }
 .type-card
@@ -158,15 +186,94 @@ body.choose h1
     border-radius: 20px;
     cursor: pointer;
 
+
 }
-.type-card.img
+.type-card .img
 {
     width: 100%;
-    height: 100px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-
+.type-card .img img
+{
+    width: 80%;
+    /* color: ; */
+    filter:drop-shadow( 5px -2px 0 #f2890867);
+}
+.type-card .img.tomnaya img
+{
+    width: 60%;
+}
+.type-card.active .img img
+{
+    filter:drop-shadow( 5px -2px 0 #006a2a67);
+}
 .type-card h2
 {
     font-size: 20px;
     font-weight: 500;
+    height: 10px;
+}
+
+
+
+
+
+
+/* ---------- */
+.button
+{
+    border: 4px solid transparent;
+
+
+    font-weight: 500;
+    background-attachment: initial;
+    background-color: #FED085 !important;
+    color: black !important;
+}
+.button:hover, .button.active
+{
+    border: 4px solid #006A2A;
+        background-image: url("/Ogra/images/bills/image.png"); 
+    background-size: cover;
+    color: #ffeed3 !important;
+
+    
+}
+
+@keyframes move-bg {
+    0% {
+        background-position: 0% 0%;
+    }
+    50%
+    {
+        background-position: 100% 0%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
+}
+
+.button.active {
+    animation: move-bg 10s linear infinite;
+}
+
+/* ------ */
+.select
+{
+    position: absolute;
+    bottom: 10px;
+    background-color: #006A2A !important;
+    color: #ffeed3 !important;
+}
+.select:hover
+{
+    background-color: #00461c !important;
+}
+.select.button-disable
+{
+    background-color: #80808063  !important;
+    pointer-events: none !important;
 }
