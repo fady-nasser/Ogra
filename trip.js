@@ -753,6 +753,22 @@ how_to_btn.addEventListener("click", showhow_to_modal);
         console.log(localStorage.getItem('ogra_trips'));
     }
 
+
+setInterval(() => {
+    all_images = document.querySelectorAll("img");
+    all_images.forEach(image => {
+        image.draggable = false;
+       
+
+image.addEventListener('contextmenu', (e) => {
+  e.preventDefault(); // Prevent right-click and long-press menu
+});
+
+image.addEventListener('touchstart', (e) => {
+  e.preventDefault(); // Prevent long-press on touch devices
+});
+    });
+}, 500);
 // --------------------------------
 
 });

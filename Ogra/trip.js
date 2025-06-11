@@ -35,8 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function saveTripToLocalStorage() {
         // Gather seat data
         const seatData = Array.from(seats).map(seat => ({
-            money: seat.dataset.money,
-            classes: Array.from(seat.classList),
+            money: seat.dataset.money, // e.g. "0,1,0,0,0,0,0,0,0"
+            classes: Array.from(seat.classList), // to know enabled/disabled
+            paid: seat.childNodes[0]?.textContent || "0", // amount paid
         }));
 
         // Get fare value
@@ -51,18 +52,38 @@ document.addEventListener("DOMContentLoaded", () => {
         // Get trip type (number of seats)
         const tripType = seats.length;
 
-        // Timestamp for history
-        const timestamp = Date.now();
+        // Get selected option in select element
+        const selectedOption = select.value;
+
+        // Get date
+        const date = new Date().toISOString();
+
+        // Get total collected change in denominations
+        const totalChangeArray = get_total_available_change();
+        const totalChange = {
+            total: change_to_money(totalChangeArray).total,
+            denominations: totalChangeArray
+        };
 
         // Compose trip object
-        const trip = {
+        let trip = {
             seatData,
             fare,
             collectedAmount,
             changeDetails,
             tripType,
-            timestamp,
+            selectedOption,
+            date,
+            totalChange
         };
+
+        // Use an index to identify the current trip (based on a unique key)
+        let tripIndex = localStorage.getItem("ogra_trip_index");
+        if (!tripIndex) {
+            tripIndex = Date.now().toString();
+            localStorage.setItem("ogra_trip_index", tripIndex);
+        }
+        trip.index = tripIndex;
 
         // Get existing trips from localStorage
         let trips = [];
@@ -72,8 +93,13 @@ document.addEventListener("DOMContentLoaded", () => {
             trips = [];
         }
 
-        // Add new trip to history
-        trips.push(trip);
+        // Check if trip with this index exists, update it, else push new
+        const existingIndex = trips.findIndex(t => t.index === tripIndex);
+        if (existingIndex !== -1) {
+            trips[existingIndex] = trip;
+        } else {
+            trips.push(trip);
+        }
 
         // Save back to localStorage
         localStorage.setItem("ogra_trips", JSON.stringify(trips));
@@ -727,6 +753,22 @@ how_to_btn.addEventListener("click", showhow_to_modal);
         console.log(localStorage.getItem('ogra_trips'));
     }
 
+
+setInterval(() => {
+    all_images = document.querySelectorAll("img");
+    all_images.forEach(image => {
+        image.draggable = false;
+       
+
+image.addEventListener('contextmenu', (e) => {
+  e.preventDefault(); // Prevent right-click and long-press menu
+});
+
+image.addEventListener('touchstart', (e) => {
+  e.preventDefault(); // Prevent long-press on touch devices
+});
+    });
+}, 500);
 // --------------------------------
 
 });
