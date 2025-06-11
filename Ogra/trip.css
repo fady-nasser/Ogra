@@ -451,9 +451,14 @@ h1 {
 }
 .card-seat.disabled
 {
-    border: 3px solid #ccc;
+    border: 2px solid #ccc;
     color: transparent;
     background-color: transparent;
+}
+.card-seat.disabled.layer1, .card-seat.disabled.layer1 *
+{
+    background-color: transparent;
+    color: transparent !important;
 }
 .card-seat.driver {
     background-color: transparent !important;
@@ -752,13 +757,17 @@ html.dark-mode input
     border: 3px solid #006A2A;
 
 }
-html.dark-mode  .card-seat.selected
+html.dark-mode  .card-seat.selected, html.dark-mode  .card-seat:hover
 {
     border: 3px solid #006A2A;
 }
 html.dark-mode .content .header span
 {
     background-color: #006A2A;
+}
+html.dark-mode .collected-div.active
+{
+    background-color: #2c2c2c;
 }
 
 /* html.dark-mode .button

@@ -504,6 +504,7 @@ seats.forEach((s, i) => {
 
                         vacant.classList.add("card-seat");
                         vacant.classList.add("disabled");
+                        vacant.classList.add("layer1");
                         span = document.createElement("span");
                         vacant.appendChild(span);
                          seats_container.insertBefore(vacant, add_btn);

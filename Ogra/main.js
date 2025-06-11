@@ -1,7 +1,9 @@
         //storage check for dark mode
-        document.addEventListener('DOMContentLoaded', () => {
+        // document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('darkMode') === 'enabled') {
                 document.querySelector("html").classList.add('dark-mode');
+                // document.querySelector("html").classList.add("no-transition");
+                // document.querySelector("html").classList.remove("no-transition");
                 
             } else {
                 document.querySelector("html").classList.remove('dark-mode');
@@ -27,6 +29,6 @@
         //         })
         //         .catch(error => console.error('Error loading trip.html:', error));
         // }
-        });
+        // });
 
         
