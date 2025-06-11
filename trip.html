@@ -15,8 +15,8 @@
     <div class="top">
         <div onclick="window.location.href='/Ogra/choose.html';" class="back primary"><i class="fa-solid fa-arrow-left"></i></div>
         <select name="type" id="" class="primary">
-            <option value="8">8-seats</option>
-            <option value="14">14-seats</option>
+            <option value="8">8-seater</option>
+            <option value="14">14-seater</option>
         </select>
         <div class="how-to primary" style="width:14px">
             <i class="fa-solid fa-question"></i>
@@ -25,7 +25,7 @@
 
     <!-- Input for fare -->
     <div class="input">
-        <input type="number" name="fare" id="" placeholder="Fare...">
+        <input class="layer1" type="number" name="fare" id="" placeholder="Fare...">
         <div class=""></div>
     </div>
     <div class="collected-div">
@@ -34,7 +34,7 @@
             <img src="images/bills/downarrow.png" style="width: 10px;" alt="down arrow">
         </div>
     </div>
-    <div class="collected-details">
+    <div class="collected-details layer1">
         <div class="bill">
             <img src="images/bills/quarter.png" alt="Quarter Bill">
             <div class="count">0</div>
@@ -87,23 +87,27 @@
 
             <div class="bottom-modal">
       <div class="modal-overlay"></div>
-      <div class="content">
+      <div class="content layer1">
         <div class="header">
           <div class="drag-icon"><span></span></div>
         </div>
         <div class="modal-body">
-          <h2>How to use?</h2>
+          <h2>Guide</h2>
           <div class="how-row">
-            <div class="card-seat explain"></div>
-            <p>This means that there is no problem with this seat or it is not filled</p>
+            <div class="card-seat explain layer2"></div>
+            <p>This means that the seat is enabled, double click to disable it</p>
           </div>
             <div class="how-row">
             <div class="card-seat explain disabled"></div>
-            <p>This means that the seat is disabled(e.g the driver's seat)</p>
+            <p>This means that the seat is disabled, double click to re-enable it, long press to delete</p>
+          </div>
+                      <div class="how-row">
+            <div class="card-seat explain driver"></div>
+            <p>This means that the seat is the driver's seat you can't use it</p>
           </div>
             <div class="how-row">
             <div class="card-seat explain suggested"></div>
-            <p>This means that there is a suggested action to give change to someone</p>
+            <p>This means that there is a suggested action, long press to confirm you did it</p>
           </div>
           </div>
           </div>
@@ -114,7 +118,7 @@
 
         <div class="menu-modal">
       <div class="menu-overlay"></div>
-      <div class="content">
+      <div class="content layer1">
         <div class="header">
           <div class="drag-icon"><span></span></div>
         </div>
@@ -193,8 +197,8 @@
                 <div class="less"><i class="fa-solid fa-minus"></i></div>
             </div>
         </div>
-        <!-- Add button -->
-        <div class="add button">Add</div>
+
+        
           </div>
           </div>
           </div>

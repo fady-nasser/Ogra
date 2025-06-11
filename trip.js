@@ -18,7 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const details_displayed = document.querySelectorAll(".bill .count");
     const add_seat = document.querySelector(".card-seat.add");
     const select = document.querySelector("select");
-
+    let seats;
+    
     // --- CONSTANTS ---
     const money_values = [0.25, 0.5, 1, 5, 10, 20, 50, 100, 200];
 
@@ -27,7 +28,131 @@ document.addEventListener("DOMContentLoaded", () => {
     let suggestedSeats = new Set();
     let tapTimeout = null;
     let coins_to_give_per_seat = [];
+    const imgs = ["quarter.png", "half.png", "1.png", "5.png", "10.png", "20.png", "50.png", "100.png", "200.png"]
+    // --- LOCAL STORAGE SAVE/LOAD FUNCTIONS ---
 
+    // Save the current trip state to localStorage
+    function saveTripToLocalStorage() {
+        // Gather seat data
+        const seatData = Array.from(seats).map(seat => ({
+            money: seat.dataset.money, // e.g. "0,1,0,0,0,0,0,0,0"
+            classes: Array.from(seat.classList), // to know enabled/disabled
+            paid: seat.childNodes[0]?.textContent || "0", // amount paid
+        }));
+
+        // Get fare value
+        const fare = input.value;
+
+        // Get collected amount (from UI)
+        const collectedAmount = collected_amount_display.textContent;
+
+        // Get change details (from UI)
+        const changeDetails = Array.from(details_displayed).map(el => el.textContent);
+
+        // Get trip type (number of seats)
+        const tripType = seats.length;
+
+        // Get selected option in select element
+        const selectedOption = select.value;
+
+        // Get date
+        const date = new Date().toISOString();
+
+        // Get total collected change in denominations
+        const totalChangeArray = get_total_available_change();
+        const totalChange = {
+            total: change_to_money(totalChangeArray).total,
+            denominations: totalChangeArray
+        };
+
+        // Compose trip object
+        let trip = {
+            seatData,
+            fare,
+            collectedAmount,
+            changeDetails,
+            tripType,
+            selectedOption,
+            date,
+            totalChange
+        };
+
+        // Use an index to identify the current trip (based on a unique key)
+        let tripIndex = localStorage.getItem("ogra_trip_index");
+        if (!tripIndex) {
+            tripIndex = Date.now().toString();
+            localStorage.setItem("ogra_trip_index", tripIndex);
+        }
+        trip.index = tripIndex;
+
+        // Get existing trips from localStorage
+        let trips = [];
+        try {
+            trips = JSON.parse(localStorage.getItem("ogra_trips")) || [];
+        } catch (e) {
+            trips = [];
+        }
+
+        // Check if trip with this index exists, update it, else push new
+        const existingIndex = trips.findIndex(t => t.index === tripIndex);
+        if (existingIndex !== -1) {
+            trips[existingIndex] = trip;
+        } else {
+            trips.push(trip);
+        }
+
+        // Save back to localStorage
+        localStorage.setItem("ogra_trips", JSON.stringify(trips));
+    }
+
+    // // Load a trip from localStorage by index (for use in index page)
+    // function loadTripFromLocalStorage(index) {
+    //     let trips = [];
+    //     try {
+    //         trips = JSON.parse(localStorage.getItem("ogra_trips")) || [];
+    //     } catch (e) {
+    //         trips = [];
+    //     }
+    //     if (!trips[index]) return;
+
+    //     const trip = trips[index];
+
+    //     // Remove existing seats except driver, add, and explain
+    //     document.querySelectorAll('.seats-container div:not(.add)').forEach(seat => seat.remove());
+
+    //     // Restore seats
+    //     trip.seatData.forEach(seatInfo => {
+    //         const new_seat = document.createElement("div");
+    //         seatInfo.classes.forEach(cls => new_seat.classList.add(cls));
+    //         new_seat.dataset.money = seatInfo.money;
+    //         const span = document.createElement("span");
+    //         new_seat.appendChild(span);
+    //         seats_container.insertBefore(new_seat, add_btn);
+    //     });
+
+    //     // Restore fare
+    //     input.value = trip.fare;
+
+    //     // Restore collected amount (UI only)
+    //     collected_amount_display.textContent = trip.collectedAmount;
+
+    //     // Restore change details (UI only)
+    //     details_displayed.forEach((el, i) => {
+    //         el.textContent = trip.changeDetails[i] || "0";
+    //     });
+
+    //     seats = document.querySelectorAll('.card-seat:not(.driver, .add, .explain)');
+    //     update_seats();
+    // }
+
+    // Optionally, call saveTripToLocalStorage() after any major change
+    // For example, after updating seats or fare:
+    // saveTripToLocalStorage();
+
+    // Example: Save trip when user clicks a "Save Trip" button (add this button in your HTML)
+    // document.querySelector("#save-trip-btn").addEventListener("click", saveTripToLocalStorage);
+
+    // You can also call saveTripToLocalStorage() automatically after certain actions if desired.
     // --- UTILITY FUNCTIONS ---
 
     // Hide the menu and backdrop
@@ -36,9 +161,10 @@ document.addEventListener("DOMContentLoaded", () => {
         backdrop.classList.remove('show');
     }
 
-    // Calculate the total money value from a money array
+    // Calculate the total money value from a money array and return both total and breakdown
     function change_to_money(money_array) {
-        return money_array.reduce((sum, count, index) => sum + count * money_values[index], 0);
+        let total = money_array.reduce((sum, count, index) => sum + count * money_values[index], 0);
+        return { total, breakdown: money_array.map((count, index) => ({ count, value: money_values[index] })) };
     }
 
     // Get the total available change from all seats
@@ -54,55 +180,101 @@ document.addEventListener("DOMContentLoaded", () => {
     {
         // --- SEAT EVENTS ---
         seats.forEach((seat, i) => {
-            // remove all event listeners if there are, so rhat we can re add them
-        // Long press to confirm suggestion (mouse)
-        seat.addEventListener('mousedown', function () {
-            if (!suggestedSeats.has(i)) return;
-            tapTimeout = setTimeout(() => {
-                confirmSuggestion(i);
-            }, 600);
-        });
-        seat.addEventListener('mouseup', () => {
-            clearTimeout(tapTimeout);
-        });
-        seat.addEventListener('mouseleave', () => {
-            clearTimeout(tapTimeout);
-        });
 
-        // Long press to confirm suggestion (touch)
-        seat.addEventListener('touchstart', function () {
-            if (!suggestedSeats.has(i)) return;
-            tapTimeout = setTimeout(() => {
-                confirmSuggestion(i);
-            }, 600);
+            // Remove all previous event listeners by cloning (quick workaround)
+            const newSeat = seat.cloneNode(true);
+            if (seat.parentNode) {
+                seat.parentNode.replaceChild(newSeat, seat);
+                seat = newSeat;
+            }
+
+            // Long press to confirm suggestion (mouse)
+            seat.addEventListener('mousedown', function () {
+                if (seat.classList.contains('disabled')) {
+                    tapTimeout = setTimeout(() => {
+                        seat.remove();
+                        seats = document.querySelectorAll('.card-seat:not(.driver, .add, .explain)');
+                        update_seats();
+                    }, 600);
+                    return;
+                }
+                if (!suggestedSeats.has(i)) return;
+                tapTimeout = setTimeout(() => {
+                    confirmSuggestion(i);
+                }, 600);
+            });
+            seat.addEventListener('mouseup', () => {
+                clearTimeout(tapTimeout);
+            });
+            seat.addEventListener('mouseleave', () => {
+                clearTimeout(tapTimeout);
+            });
+
+            // Long press to confirm suggestion (touch)
+            seat.addEventListener('touchstart', function () {
+                if (seat.classList.contains('disabled')) {
+                    tapTimeout = setTimeout(() => {
+                        seat.remove();
+                        seats = document.querySelectorAll('.card-seat:not(.driver, .add, .explain)');
+                        update_seats();
+                    }, 600);
+                    return;
+                }
+                if (!suggestedSeats.has(i)) return;
+                tapTimeout = setTimeout(() => {
+                    confirmSuggestion(i);
+                }, 600);
+            });
+            seat.addEventListener('touchend', () => {
+                clearTimeout(tapTimeout);
+            });
+            seat.addEventListener('touchcancel', () => {
+                clearTimeout(tapTimeout);
+            });
+
+            // Double click to enable/disable seat
+            seat.addEventListener('dblclick', function () {
+                if (seat.classList.contains('disabled')) {
+                    seat.classList.remove('disabled');
+                } else {
+                    seat.classList.add('disabled');
+                }
+            });
+
+            // Double tap to enable/disable seat (using a timer)
+            let lastTap = 0;
+            seat.addEventListener('touchend', function (e) {
+                const currentTime = new Date().getTime();
+                if (currentTime - lastTap < 400) {
+                    if (seat.classList.contains('disabled')) {
+                        seat.classList.remove('disabled');
+                    } else {
+                        seat.classList.add('disabled');
+                    }
+                    e.preventDefault();
+                }
+                lastTap = currentTime;
+            });
+
+            // Open menu on click
+            // Setup menu modal and get the show function
+            const showMenuModal = setupMenuModal();
+
+            seat.addEventListener('click', function () {
+                if (seat.classList.contains('disabled')) return;
+
+                seats.forEach(s => s.classList.remove('selected'));
+                seat.classList.add('selected');
+                lastSelectedSeat = seat;
+                // Wait 500ms before showing the menu modal and updating
+                setTimeout(() => {
+                    if (showMenuModal && !seat.classList.contains("disabled")) showMenuModal();
+                    update(seat);
+                }, 500);
+            });
+
         });
-        seat.addEventListener('touchend', () => {
-            clearTimeout(tapTimeout);
-        });
-        seat.addEventListener('touchcancel', () => {
-            clearTimeout(tapTimeout);
-        });
-
-        // Open menu on click
-    // Setup menu modal and get the show function
-    const showMenuModal = setupMenuModal();
-
-    // When a seat is clicked, show the menu modal
-    seats.forEach((seat, i) => {
-        seat.addEventListener('click', function () {
-            if (seat.classList.contains('disabled')) return;
-            seats.forEach(s => s.classList.remove('selected'));
-            seat.classList.add('selected');
-            lastSelectedSeat = seat;
-            // Show the menu modal
-            if (showMenuModal) showMenuModal();
-            update(seat);
-        });
-    });
-
-    });
-
-
+        seats = document.querySelectorAll('.card-seat:not(.driver, .add, .explain)');
     }
 
  function setupMenuModal() {
@@ -174,7 +346,13 @@ document.addEventListener("DOMContentLoaded", () => {
         seat.dataset.money = new_money.join(',');
 
         // Update the seat's display
-        seat.textContent = change_to_money(new_money);
+        seat.childNodes[0].textContent = change_to_money(new_money).total;
+        seat.childNodes[0].style.display = "initial";
+        
+            if (seat.childNodes[1] && seat.childNodes[1].nodeType === Node.ELEMENT_NODE) {
+                seat.removeChild(seat.childNodes[1]);
+            }
+        
 
         // Recalculate with updated data
         calculate(get_total_available_change());
@@ -182,6 +360,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- MAIN UPDATE FUNCTION ---
     function update(seat) {
+        console.log("Seats:", seats);
+seats.forEach((s, i) => {
+    console.log(`Seat ${i}:`, s.dataset.money);
+});
         // Parse the seat's money data and update the menu amounts
         let money_array = seat.dataset.money.split(',').map(Number);
         amounts.forEach((amount, index) => {
@@ -206,15 +388,15 @@ document.addEventListener("DOMContentLoaded", () => {
             
         });
         // Update seat display with total paid
-        let seat_payed = change_to_money(money_array);
-        seat.textContent = seat_payed;
+        let seat_payed = change_to_money(money_array).total;
+        seat.childNodes[0].textContent = seat_payed;
 
         // Calculate how much change each seat needs
         seat_change_needs = new Array(seats.length).fill(0);
         if (input.value !== "") {
             let fare = parseFloat(input.value);
             seats.forEach((s, i) => {
-                let paid = parseFloat(s.innerText) || 0;
+                let paid = parseFloat(s.childNodes[0].innerText) || 0;
                 let change_needed = paid - fare;
                 seat_change_needs[i] = change_needed < 0 ? 0 : change_needed;
             });
@@ -226,6 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 input.classList.remove('error');
             });
         }
+        
     }
 
     // --- GREEDY CHANGE DISTRIBUTION ---
@@ -258,7 +441,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 coins_to_give_per_seat[seatIndex] = coins_to_give;
                 seat.classList.remove('suggested');
                 seat.classList.add('confirmed');
-            } else if (change_to_money(coins_to_give) > 0) {
+            } else if (change_to_money(coins_to_give).total > 0) {
                 // Partial change is possible — suggest
                 suggestedSeats.add(seatIndex);
                 seat.classList.add('suggested');
@@ -266,7 +449,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 seat.childNodes[1]?.remove(); // Remove previous give div if exists
                 
                 let give_div = document.createElement('div');
-                give_div.innerText = "Give: " + change_to_money(coins_to_give);
+                // denomination
+                console.log(change_to_money(coins_to_give).breakdown);
+                // Clear previous content
+                seat.childNodes[0].style.display = "none";
+                give_div.innerHTML = "";
+
+                // For each denomination, if count > 0, show image and count
+                change_to_money(coins_to_give).breakdown.forEach((item, index) => {
+                    if (item.count > 0) {
+                        const img = document.createElement('img');
+                        img.src = "images/bills/" + imgs[index];
+                        img.alt = item.value + " L.E";
+                        img.style.width = "24px";
+                        img.style.verticalAlign = "middle";
+                        img.style.marginRight = "4px";
+                        give_div.appendChild(img);
+
+                        const span = document.createElement('span');
+                        span.textContent = `x${item.count} `;
+                        give_div.appendChild(span);
+                    }
+                });
                 seat.appendChild(give_div);
             } else {
                 // No change possible
@@ -278,8 +482,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Log suggestions for debugging
         console.log("Suggestions:", [...suggestedSeats]);
+        active_seats = seats_container.querySelectorAll(".card-seat:not(.driver, .add, .disabled")
         // Show remaining money in the UI
-        collected_amount_display.textContent = "Collected: " + change_to_money(coins_available) + "L.E / " + seats.length*parseFloat(input.value) + "L.E";
+        collected_amount_display.textContent = "Collected: " + change_to_money(coins_available).total + "L.E / " + active_seats.length*parseFloat(input.value) + "L.E";
     }
     function generate_seats()
     {
@@ -294,14 +499,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     if( i == 5)
                     {
                         
-                        placeholder = document.createElement("div");
-                         seats_container.insertBefore(placeholder, add_btn);
+                        vacant = document.createElement("div");
+                        vacant.dataset.money = "0,0,0,0,0,0,0,0,0";
+
+                        vacant.classList.add("card-seat");
+                        vacant.classList.add("disabled");
+                        span = document.createElement("span");
+                        vacant.appendChild(span);
+                         seats_container.insertBefore(vacant, add_btn);
                          continue;
                     }
                     else
                     {
+                        span = document.createElement("span");
                                             new_seat = document.createElement("div");
+                                            new_seat.appendChild(span);
                     new_seat.classList.add("card-seat");
+                    new_seat.classList.add("layer1");
                     new_seat.dataset.money = "0,0,0,0,0,0,0,0,0";
                     seats_container.insertBefore(new_seat, add_btn);
                     }
@@ -329,17 +543,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 if(i != 0)
                 {
-                    if( i == 1)
-                    {
-                        console.log(1111)
-                        placeholder = document.createElement("div");
-                         seats_container.insertBefore(placeholder, add_btn);
-                         continue;
-                    }
+if (i == 1) {
+    vacant = document.createElement("div");
+    // vacant.dataset.money = "0,0,0,0,0,0,0,0,0";
+    // vacant.classList.add("card-seat");
+    // vacant.classList.add("disabled");
+    // span = document.createElement("span");
+    // vacant.appendChild(span);
+    seats_container.insertBefore(vacant, add_btn);
+    continue;
+}
                     else
                     {
                                             new_seat = document.createElement("div");
                     new_seat.classList.add("card-seat");
+                    new_seat.classList.add("layer1");
+                         span = document.createElement("span");
+                        new_seat.appendChild(span);
                     new_seat.dataset.money = "0,0,0,0,0,0,0,0,0";
                     seats_container.insertBefore(new_seat, add_btn);
                     }
@@ -378,12 +598,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if(collected_details_div.classList.contains("show"))
         {
             collected_details_div.classList.remove("show");
+            collected_amount_btn.querySelector("img").style.transform = "rotateZ(0deg)";
             
 
         }
         else
         {
             collected_details_div.classList.add("show");
+            
+            collected_amount_btn.querySelector("img").style.transform = "rotateZ(180deg)";
 
         }
                                 setTimeout(() => {
@@ -396,7 +619,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
         new_seat = document.createElement("div");
         new_seat.classList.add("card-seat");
+        new_seat.classList.add("layer1");
         new_seat.dataset.money = "0,0,0,0,0,0,0,0,0";
+                                span = document.createElement("span");
+                        new_seat.appendChild(span);
         seats_container.insertBefore(new_seat, add_btn);
         
         seats = document.querySelectorAll('.card-seat:not(.driver, .add, .explain)');
@@ -460,6 +686,7 @@ document.addEventListener("DOMContentLoaded", () => {
         seats_num = parseInt(selected_val);
         // Remove existing seats except driver, add, and explain
         document.querySelectorAll('.seats-container div:not(.add)').forEach(seat => seat.remove());
+        
         generate_seats();
     });
 
@@ -518,6 +745,13 @@ document.addEventListener("touchmove", dragging);
 document.addEventListener("touchend", dragStop);
 modal_overlay.addEventListener("click", hidehow_to_modal);
 how_to_btn.addEventListener("click", showhow_to_modal);
+
+
+    saveTripToLocalStorage();
+    if (localStorage.getItem('ogra_trips'))
+    {
+        console.log(localStorage.getItem('ogra_trips'));
+    }
 
 // --------------------------------
 

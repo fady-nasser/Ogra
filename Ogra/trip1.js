@@ -29,104 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let tapTimeout = null;
     let coins_to_give_per_seat = [];
     const imgs = ["quarter.png", "half.png", "1.png", "5.png", "10.png", "20.png", "50.png", "100.png", "200.png"]
-    // --- LOCAL STORAGE SAVE/LOAD FUNCTIONS ---
 
-    // Save the current trip state to localStorage
-    function saveTripToLocalStorage() {
-        // Gather seat data
-        const seatData = Array.from(seats).map(seat => ({
-            money: seat.dataset.money,
-            classes: Array.from(seat.classList),
-        }));
-
-        // Get fare value
-        const fare = input.value;
-
-        // Get collected amount (from UI)
-        const collectedAmount = collected_amount_display.textContent;
-
-        // Get change details (from UI)
-        const changeDetails = Array.from(details_displayed).map(el => el.textContent);
-
-        // Get trip type (number of seats)
-        const tripType = seats.length;
-
-        // Timestamp for history
-        const timestamp = Date.now();
-
-        // Compose trip object
-        const trip = {
-            seatData,
-            fare,
-            collectedAmount,
-            changeDetails,
-            tripType,
-            timestamp,
-        };
-
-        // Get existing trips from localStorage
-        let trips = [];
-        try {
-            trips = JSON.parse(localStorage.getItem("ogra_trips")) || [];
-        } catch (e) {
-            trips = [];
-        }
-
-        // Add new trip to history
-        trips.push(trip);
-
-        // Save back to localStorage
-        localStorage.setItem("ogra_trips", JSON.stringify(trips));
-    }
-
-    // // Load a trip from localStorage by index (for use in index page)
-    // function loadTripFromLocalStorage(index) {
-    //     let trips = [];
-    //     try {
-    //         trips = JSON.parse(localStorage.getItem("ogra_trips")) || [];
-    //     } catch (e) {
-    //         trips = [];
-    //     }
-    //     if (!trips[index]) return;
-
-    //     const trip = trips[index];
-
-    //     // Remove existing seats except driver, add, and explain
-    //     document.querySelectorAll('.seats-container div:not(.add)').forEach(seat => seat.remove());
-
-    //     // Restore seats
-    //     trip.seatData.forEach(seatInfo => {
-    //         const new_seat = document.createElement("div");
-    //         seatInfo.classes.forEach(cls => new_seat.classList.add(cls));
-    //         new_seat.dataset.money = seatInfo.money;
-    //         const span = document.createElement("span");
-    //         new_seat.appendChild(span);
-    //         seats_container.insertBefore(new_seat, add_btn);
-    //     });
-
-    //     // Restore fare
-    //     input.value = trip.fare;
-
-    //     // Restore collected amount (UI only)
-    //     collected_amount_display.textContent = trip.collectedAmount;
-
-    //     // Restore change details (UI only)
-    //     details_displayed.forEach((el, i) => {
-    //         el.textContent = trip.changeDetails[i] || "0";
-    //     });
-
-    //     seats = document.querySelectorAll('.card-seat:not(.driver, .add, .explain)');
-    //     update_seats();
-    // }
-
-    // Optionally, call saveTripToLocalStorage() after any major change
-    // For example, after updating seats or fare:
-    // saveTripToLocalStorage();
-
-    // Example: Save trip when user clicks a "Save Trip" button (add this button in your HTML)
-    // document.querySelector("#save-trip-btn").addEventListener("click", saveTripToLocalStorage);
-
-    // You can also call saveTripToLocalStorage() automatically after certain actions if desired.
     // --- UTILITY FUNCTIONS ---
 
     // Hide the menu and backdrop
@@ -489,7 +392,6 @@ seats.forEach((s, i) => {
                                             new_seat = document.createElement("div");
                                             new_seat.appendChild(span);
                     new_seat.classList.add("card-seat");
-                    new_seat.classList.add("layer1");
                     new_seat.dataset.money = "0,0,0,0,0,0,0,0,0";
                     seats_container.insertBefore(new_seat, add_btn);
                     }
@@ -519,11 +421,11 @@ seats.forEach((s, i) => {
                 {
 if (i == 1) {
     vacant = document.createElement("div");
-    // vacant.dataset.money = "0,0,0,0,0,0,0,0,0";
-    // vacant.classList.add("card-seat");
-    // vacant.classList.add("disabled");
-    // span = document.createElement("span");
-    // vacant.appendChild(span);
+    vacant.dataset.money = "0,0,0,0,0,0,0,0,0";
+    vacant.classList.add("card-seat");
+    vacant.classList.add("disabled");
+    span = document.createElement("span");
+    vacant.appendChild(span);
     seats_container.insertBefore(vacant, add_btn);
     continue;
 }
@@ -531,7 +433,6 @@ if (i == 1) {
                     {
                                             new_seat = document.createElement("div");
                     new_seat.classList.add("card-seat");
-                    new_seat.classList.add("layer1");
                          span = document.createElement("span");
                         new_seat.appendChild(span);
                     new_seat.dataset.money = "0,0,0,0,0,0,0,0,0";
@@ -593,7 +494,6 @@ if (i == 1) {
     
         new_seat = document.createElement("div");
         new_seat.classList.add("card-seat");
-        new_seat.classList.add("layer1");
         new_seat.dataset.money = "0,0,0,0,0,0,0,0,0";
                                 span = document.createElement("span");
                         new_seat.appendChild(span);
@@ -719,13 +619,6 @@ document.addEventListener("touchmove", dragging);
 document.addEventListener("touchend", dragStop);
 modal_overlay.addEventListener("click", hidehow_to_modal);
 how_to_btn.addEventListener("click", showhow_to_modal);
-
-
-    saveTripToLocalStorage();
-    if (localStorage.getItem('ogra_trips'))
-    {
-        console.log(localStorage.getItem('ogra_trips'));
-    }
 
 // --------------------------------
 

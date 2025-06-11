@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="top">
-        <div class="dark-check">
+        <div class="dark-check layer1">
             <i class="fa-solid fa-moon"></i>
         </div>
         <!-- <div class="how-to">
@@ -19,29 +19,29 @@
         </div> -->
     </div>
     <h1 style="width: 200px; text-align: center;" class="primary">Ready For a New Ride!</h1>
-    <a href="/Ogra/choose.html" class="start-ride button">Start Ride</a>
+    <a href="/Ogra/choose.html" class="start-ride button">Start Ride!</a>
     <a href="/" class="start" style="width: 10px; height: 10px;"></a>
     
-    <div class="history">
+    <div class="history layer1">
         <div class="history-title">
             <i class="fa-solid fa-clock-rotate-left"></i>
             <h2>History</h2>
         </div>
         <div class="history-card-container">
-            <div class="history-card">
-                <div class="history-card-type"> 11-Seats</div>
+            <div class="history-card layer2">
+                <div class="history-card-type"> 11-Seater</div>
                 <div class="history-card-date"> Apr 24, 2024, 10:00 AM</div>
             </div>
-            <div class="history-card">
-                <div class="history-card-type"> 11-Seats</div>
+            <div class="history-card layer2">
+                <div class="history-card-type"> 11-Seater</div>
                 <div class="history-card-date"> Apr 24, 2024, 10:00 AM</div>
             </div>
-            <div class="history-card">
-                <div class="history-card-type"> 11-Seats</div>
+            <div class="history-card layer2">
+                <div class="history-card-type"> 11-Seater</div>
                 <div class="history-card-date"> Apr 24, 2024, 10:00 AM</div>
             </div>
-            <div class="history-card">
-                <div class="history-card-type"> 11-Seats</div>
+            <div class="history-card layer2">
+                <div class="history-card-type"> 11-Seater</div>
                 <div class="history-card-date"> Apr 24, 2024, 10:00 AM</div>
             </div>
         </div>
@@ -222,7 +222,19 @@ how_to_btn.addEventListener("click", showhow_to_modal);
                 localStorage.setItem('darkMode', 'disabled');
             }
         });
+
+            if (localStorage.getItem('ogra_trips')) {
+                let trips = JSON.parse(localStorage.getItem('ogra_trips'));
+                trips.forEach(trip => {
+                  // date = trip.date;
+                  // let type = trip.tripType;
+                  // console.log(trip);
+                                  type = trip.selectedOption + "-Seater, " + trip.tripType + " Seats";
+                console.log(type);
+                });
+
+            } 
     </script>
-    <script src="app.js"></script>
+    <!-- <script src="app.js"></script> -->
 </body>
 </html>
