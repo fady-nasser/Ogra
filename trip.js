@@ -244,8 +244,10 @@ document.addEventListener("DOMContentLoaded", () => {
             // Double tap to enable/disable seat (using a timer)
             let lastTap = 0;
             let db_tap;
+            let tap_difference;
             seat.addEventListener('touchend', function (e) {
                 const currentTime = new Date().getTime();
+                tap_difference = currentTime - lastTap;
                 if (currentTime - lastTap < 400) {
                     if (seat.classList.contains('disabled')) {
                         seat.classList.remove('disabled');
@@ -266,13 +268,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Wait 405ms before showing the menu modal and updating
                 setTimeout(() => {
-                                    if (seat.classList.contains('disabled') || db_tap) return;
+                if(tap_difference)
+                {
+                    if(tap_difference > 400)
+                    {
+                                                            if (seat.classList.contains('disabled') || db_tap) return;
 
                 seats.forEach(s => s.classList.remove('selected'));
                 seat.classList.add('selected');
                 lastSelectedSeat = seat;
                     if (showMenuModal && !seat.classList.contains("disabled")) showMenuModal();
                     update(seat);
+                    }
+                }
+
                 }, 405);
             });
 
