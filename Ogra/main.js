@@ -1,6 +1,3 @@
-        
-        
-        
         //storage check for dark mode
         // document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('darkMode') === 'enabled') {

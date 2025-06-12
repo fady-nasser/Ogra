@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 {
                     if(tap_difference > 400)
                     {
-                                                            if (seat.classList.contains('disabled') || db_tap) return;
+                                                            if (seat.classList.contains('disabled')) return;
 
                 seats.forEach(s => s.classList.remove('selected'));
                 seat.classList.add('selected');
