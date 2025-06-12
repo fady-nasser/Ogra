@@ -3,8 +3,8 @@
   "short_name": "Ogra",                 
   "start_url": ".",                         
   "display": "standalone",                  
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#006A2A",
+  "theme_color": "#006A2A",
   "icons": [   
     {
       "src": "/Ogra/images/bills/icon-192.png",
