@@ -800,4 +800,5 @@ html.dark-mode .type-card .img img
 }
 html, body {
   overscroll-behavior-y: contain; /* Prevent pull-to-refresh */
+  touch-action: none;
 }
