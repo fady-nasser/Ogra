@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Get fare value
         const fare = input.value;
-
+        
         // Get collected amount (from UI)
         const collectedAmount = collected_amount_display.textContent;
 
@@ -243,6 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Double tap to enable/disable seat (using a timer)
             let lastTap = 0;
+            let db_tap;
             seat.addEventListener('touchend', function (e) {
                 const currentTime = new Date().getTime();
                 if (currentTime - lastTap < 400) {
@@ -252,6 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         seat.classList.add('disabled');
                     }
                     e.preventDefault();
+                    db_tap = true;
                 }
                 lastTap = currentTime;
             });
@@ -261,16 +263,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const showMenuModal = setupMenuModal();
 
             seat.addEventListener('click', function () {
-                if (seat.classList.contains('disabled')) return;
+
+                // Wait 405ms before showing the menu modal and updating
+                setTimeout(() => {
+                                    if (seat.classList.contains('disabled') || db_tap) return;
 
                 seats.forEach(s => s.classList.remove('selected'));
                 seat.classList.add('selected');
                 lastSelectedSeat = seat;
-                // Wait 500ms before showing the menu modal and updating
-                setTimeout(() => {
                     if (showMenuModal && !seat.classList.contains("disabled")) showMenuModal();
                     update(seat);
-                }, 500);
+                }, 405);
             });
 
         });
