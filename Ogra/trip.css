@@ -445,10 +445,7 @@ h1 {
 .card-seat.selected {
     border: 3px solid #FEAA23;
 }
-.card-seat:hover {
-    border: 2px solid #FEAA23;
-    cursor: pointer;
-}
+
 .card-seat.disabled
 {
     border: 2px solid #ccc;
@@ -757,7 +754,7 @@ html.dark-mode input
     border: 3px solid #006A2A;
 
 }
-html.dark-mode  .card-seat.selected, html.dark-mode  .card-seat:hover
+html.dark-mode  .card-seat.selected
 {
     border: 3px solid #006A2A;
 }
@@ -789,3 +786,18 @@ html.dark-mode .type-card .img img
     
     filter:drop-shadow( 5px -2px 0 #b9b9b925);
 } */
+ /* Only apply hover effects on devices that support hover */
+@media (hover: hover) and (pointer: fine) {
+
+    html.dark-mode  .card-seat:hover
+    {
+        border: 3px solid #006A2A;
+    }
+  .card-seat:hover {
+    border: 2px solid #FEAA23;
+    cursor: pointer;
+}
+}
+html, body {
+  overscroll-behavior-y: contain; /* Prevent pull-to-refresh */
+}

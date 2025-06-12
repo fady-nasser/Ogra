@@ -288,7 +288,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const showMenuModal = () => {
         menuModal.classList.add("show");
-        document.body.style.overflowY = "hidden";
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
         menuContent.style.height = "50vh";
         menuModal.classList.remove("fullscreen");
     };
@@ -298,7 +301,9 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const hideMenuModal = () => {
         menuModal.classList.remove("show");
-        document.body.style.overflowY = "auto";
+          document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
     };
     const dragStart = (e) => {
         isDragging = true;
@@ -703,7 +708,9 @@ let isDragging = false, startY, startHeight;
 // Show the bottom sheet, hide body vertical scrollbar, and call updateSheetHeight
 const showhow_to_modal = () => {
     how_to_modal.classList.add("show");
-    document.body.style.overflowY = "hidden";
+      document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
     updateSheetHeight(50);
 }
 const updateSheetHeight = (height) => {
@@ -714,7 +721,9 @@ const updateSheetHeight = (height) => {
 // Hide the bottom sheet and show body vertical scrollbar
 const hidehow_to_modal = () => {
     how_to_modal.classList.remove("show");
-    document.body.style.overflowY = "auto";
+      document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
 }
 // Sets initial drag position, modal_content height and add dragging class to the bottom sheet
 const dragStart = (e) => {
