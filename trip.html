@@ -13,28 +13,27 @@
   <link rel="manifest" href="manifest.json" />
 
   <!-- Meta settings for look and feel -->
-     <!-- <meta name="theme-color" content="#E47902" /> -->
-  <!-- <meta name="theme-color" content="#006A2A"  media="(prefers-color-scheme: dark)"/> -->
+   <meta name="theme-color" content="#006A2A" />
+  <meta name="theme-color" content="#006A2A"  media="(prefers-color-scheme: dark)"/>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <title>Trip</title>
     <link rel="stylesheet" href="trip.css">
     <!-- Font Awesome for icons -->
     <script src="https://kit.fontawesome.com/2707d1b038.js" crossorigin="anonymous"></script>
-    <script src="main.js"></script>
+
 </head>
 <body class="trip">
     <!-- Top navigation bar -->
     <div class="top">
-        <div onclick="window.location.href='/Ogra/choose.html';" class="back primary"><i class="fa-solid fa-arrow-left"></i></div>
+        <div onclick="window.location.href='/Ogra/';" class="back primary"><i class="fa-solid fa-arrow-left"></i></div>
         <select name="type" id="" class="primary">
-            <option value="8">8-seater</option>
-            <option value="14">14-seater</option>
+            <option value="8" data-lang = "تمنايه">8-seater</option>
+            <option value="14" data-lang = "ميكروباص">14-seater</option>
         </select>
         <div class="how-to primary" style="width:14px">
             <i class="fa-solid fa-question"></i>
@@ -110,22 +109,22 @@
           <div class="drag-icon"><span></span></div>
         </div>
         <div class="modal-body">
-          <h2>Guide</h2>
+          <h2 data-lang = "دليل">Guide</h2>
           <div class="how-row">
             <div class="card-seat explain layer2"></div>
-            <p>This means that the seat is enabled, double click to disable it</p>
+            <p data-lang = "ده معناه ان الكرسي متفعل. دوس مرتين عشان توقفه">This means that the seat is enabled, double click to disable it</p>
           </div>
             <div class="how-row">
             <div class="card-seat explain disabled"></div>
-            <p>This means that the seat is disabled, double click to re-enable it, long press to delete</p>
+            <p data-lang = "ده معناه ان الكرسي متوقف. دوس مرتين عشان تفعله تاني. خليك دايس عشان تلغيه">This means that the seat is disabled, double click to re-enable it, long press to delete</p>
           </div>
                       <div class="how-row">
             <div class="card-seat explain driver"></div>
-            <p>This means that the seat is the driver's seat you can't use it</p>
+            <p data-lang = "ده معناه ان ده كرسي السواق متقدرش تستعمله سيبك منه">This means that the seat is the driver's seat you can't use it</p>
           </div>
             <div class="how-row">
             <div class="card-seat explain suggested"></div>
-            <p>This means that there is a suggested action, long press to confirm you did it</p>
+            <p data-lang = "ده معناه ان ده في فعل مقترح. لو عملته خليك دايس عليه ">This means that there is a suggested action, long press to confirm you did it</p>
           </div>
           </div>
           </div>
@@ -141,6 +140,16 @@
           <div class="drag-icon"><span></span></div>
         </div>
         <div class="modal-body">
+                    <div class="val">
+
+            <div></div>
+            <div class="val amount">
+                <div class="val">value</div>
+                <div class="more"><i class="fa-solid fa-plus"></i></div>
+                <p class="number">1</p>
+                <div class="less"><i class="fa-solid fa-minus"></i></div>
+            </div>
+        </div>
           <!-- <h2>How to use?</h2> -->
         <!-- Coin/amount selectors -->
         <div class="quarter">
@@ -221,6 +230,7 @@
           </div>
           </div>
     <!-- JS -->
+         <script src="main.js"></script>
     <script src="trip.js"></script>
 </body>
 </html>

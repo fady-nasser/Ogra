@@ -802,3 +802,11 @@ html, body {
   overscroll-behavior-y: contain; /* Prevent pull-to-refresh */
   touch-action: none;
 }
+
+
+/* ar */
+html.ar *[data-lang], html.ar select
+{
+    font-family: "Cairo", sans-serif;
+  font-optical-sizing: auto;
+}
