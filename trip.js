@@ -583,6 +583,16 @@ seats.forEach((s, i) => {
                         img.style.verticalAlign = "middle";
                         img.style.marginRight = "4px";
                         give_div.appendChild(img);
+                                img.draggable = false;
+       
+
+                        img.addEventListener('contextmenu', (e) => {
+                        e.preventDefault(); // Prevent right-click and long-press menu
+                        });
+
+                        img.addEventListener('touchstart', (e) => {
+                        e.preventDefault(); // Prevent long-press on touch devices
+                        });
 
                         const span = document.createElement('span');
                         span.textContent = `x${item.count} `;
@@ -919,19 +929,19 @@ how_to_btn.addEventListener("click", showhow_to_modal);
 
 document.addEventListener("click", () =>
 {
-    all_images = document.querySelectorAll("img");
-    all_images.forEach(image => {
-        image.draggable = false;
+//     all_images = document.querySelectorAll("img");
+//     all_images.forEach(image => {
+//         image.draggable = false;
        
 
-image.addEventListener('contextmenu', (e) => {
-  e.preventDefault(); // Prevent right-click and long-press menu
-});
+// image.addEventListener('contextmenu', (e) => {
+//   e.preventDefault(); // Prevent right-click and long-press menu
+// });
 
-image.addEventListener('touchstart', (e) => {
-  e.preventDefault(); // Prevent long-press on touch devices
-});
-    });
+// image.addEventListener('touchstart', (e) => {
+//   e.preventDefault(); // Prevent long-press on touch devices
+// });
+//     });
         saveTripToLocalStorage();
     if (localStorage.getItem('ogra_trips'))
     {
