@@ -615,7 +615,14 @@ seats.forEach((s, i) => {
             return sum + (parseInt(seat.dataset.val) || 1);
         }, 0) * parseFloat(input.value || 0);
         // Show remaining money in the UI
+        if(localStorage.getItem("ar") == "enabled")
+    {
+        collected_amount_display.textContent = "معاك: " + change_to_money(coins_available).total + "L.E / " + total_needed + "L.E";
+    }
+    else
+    {
         collected_amount_display.textContent = "Collected: " + change_to_money(coins_available).total + "L.E / " + total_needed + "L.E";
+    }
     }
     function generate_seats()
     {
