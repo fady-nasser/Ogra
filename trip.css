@@ -799,7 +799,7 @@ html.dark-mode .type-card .img img
     cursor: pointer;
 }
 }
-html, body {
+html.modal-shown , html.modal-shown body {
   overscroll-behavior-y: contain; /* Prevent pull-to-refresh */
   touch-action: none;
 }

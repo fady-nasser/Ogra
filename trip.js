@@ -239,11 +239,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // You can also call saveTripToLocalStorage() automatically after certain actions if desired.
     // --- UTILITY FUNCTIONS ---
 
-    // Hide the menu and backdrop
-    function hide_menu() {
-        menu.classList.remove('show');
-        backdrop.classList.remove('show');
-    }
+    // // Hide the menu and backdrop
+    // function hide_menu() {
+    //     menu.classList.remove('show');
+    //     backdrop.classList.remove('show');
+    // }
 
     // Calculate the total money value from a money array and return both total and breakdown
     function change_to_money(money_array) {
@@ -391,6 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const showMenuModal = () => {
         menuModal.classList.add("show");
+            document.querySelector("html").classList.add("modal-shown");
   document.body.style.overflow = 'hidden';
   document.body.style.position = 'fixed';
   document.body.style.width = '100%';
@@ -404,6 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const hideMenuModal = () => {
         menuModal.classList.remove("show");
+        document.querySelector("html").classList.remove("modal-shown");
           document.body.style.overflow = '';
   document.body.style.position = '';
   document.body.style.width = '';
@@ -879,6 +881,7 @@ let isDragging = false, startY, startHeight;
 // Show the bottom sheet, hide body vertical scrollbar, and call updateSheetHeight
 const showhow_to_modal = () => {
     how_to_modal.classList.add("show");
+    document.querySelector("html").classList.add("modal-shown");
       document.body.style.overflow = 'hidden';
   document.body.style.position = 'fixed';
   document.body.style.width = '100%';
@@ -892,6 +895,7 @@ const updateSheetHeight = (height) => {
 // Hide the bottom sheet and show body vertical scrollbar
 const hidehow_to_modal = () => {
     how_to_modal.classList.remove("show");
+        document.querySelector("html").classList.remove("modal-shown");
       document.body.style.overflow = '';
   document.body.style.position = '';
   document.body.style.width = '';
