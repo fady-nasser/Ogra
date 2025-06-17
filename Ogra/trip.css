@@ -180,6 +180,7 @@ select
     font-weight: bold;
     unicode-bidi: isolate;
      color: black;
+       text-align: center;
 }
 select option
 {
@@ -810,3 +811,21 @@ html.ar *[data-lang], html.ar select
     font-family: "Cairo", sans-serif;
   font-optical-sizing: auto;
 }
+html.ar input::placeholder
+{
+        font-family: "Cairo", sans-serif;
+  font-optical-sizing: auto;
+  text-align: right;
+}
+
+
+.collected-div
+{
+    direction: ltr;
+    text-align: left;
+    }
+
+    html.ar .collected-div, html.ar .modal-body {
+        direction: rtl;
+        text-align: right;
+    }

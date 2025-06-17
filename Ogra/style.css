@@ -380,8 +380,25 @@ html.dark-mode .history-card-close
 
 
 /* ar */
-html.ar *[data-lang]
+html.ar *[data-lang], .history-card
 {
     font-family: "Cairo", sans-serif;
   font-optical-sizing: auto;
 }
+
+html.ar body.home
+{
+            direction: rtl;
+        text-align: right;
+}
+
+.history * 
+{
+    direction: ltr;
+    text-align: left;
+    }
+
+    html.ar .history * {
+        direction: rtl;
+        text-align: right;
+    }

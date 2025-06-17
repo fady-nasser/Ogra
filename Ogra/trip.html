@@ -14,7 +14,7 @@
 
   <!-- Meta settings for look and feel -->
    <meta name="theme-color" content="#006A2A" />
-  <meta name="theme-color" content="#006A2A"  media="(prefers-color-scheme: dark)"/>
+  <!-- <meta name="theme-color" content="#006A2A"  media="(prefers-color-scheme: dark)"/> -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
@@ -46,7 +46,7 @@
         <div class=""></div>
     </div>
     <div class="collected-div">
-        <div class="collected-amount">Collected: 0 L.E</div>
+        <div class="collected-amount" data-lang="معاك: 0 L.E">Collected: 0 L.E</div>
         <div class="down-icon">
             <img src="images/bills/downarrow.png" style="width: 10px;" alt="down arrow">
         </div>
@@ -126,7 +126,12 @@
             <div class="card-seat explain suggested"></div>
             <p data-lang = "ده معناه ان ده في فعل مقترح. لو عملته خليك دايس عليه ">This means that there is a suggested action, long press to confirm you did it</p>
           </div>
-          </div>
+            <h3 data-lang = "لو حد اداك فلوس و قالك ده كل اللي وره :">If someone gave you an amount of money and told you, this the X seats behind you:</h3>
+          <span data-lang = "1- دوس على الكرسي بتاعه. دخل الفلوس. حط القيمه عدد الكراسي اللي دفعت الفلوس دي ">1- Press on his seat and add the money he gave you, and change the value to be the number of seats this money came from</span>
+          <br>
+          <br>
+          <span data-lang = " 2- أوقف الكراسي التانيه ( بانك تدوس عليهم مرتين) ما عدا الكرسي اللي فيه الفلوس">2- Disable the rest of the seats(by double clicking) except the one that contains the money</span>
+        </div>
           </div>
           </div>
 
@@ -141,10 +146,10 @@
         </div>
         <div class="modal-body">
                     <div class="val">
-
-            <div></div>
+                    <div data-lang="قيمه">value</div>
+        
             <div class="val amount">
-                <div class="val">value</div>
+                
                 <div class="more"><i class="fa-solid fa-plus"></i></div>
                 <p class="number">1</p>
                 <div class="less"><i class="fa-solid fa-minus"></i></div>
@@ -232,5 +237,11 @@
     <!-- JS -->
          <script src="main.js"></script>
     <script src="trip.js"></script>
+    <script>
+        if(localStorage.getItem("ar") == "enabled")
+    {
+        input.placeholder = "... أجرة";
+    }
+    </script>
 </body>
 </html>
