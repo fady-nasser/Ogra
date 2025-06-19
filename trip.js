@@ -303,19 +303,31 @@ document.addEventListener("DOMContentLoaded", () => {
             // Setup menu modal and get the show function
             const showMenuModal = setupMenuModal();
 
-            seat.addEventListener('click', function () {
+            seat.addEventListener('click', function (e) {
                 // Wait 405ms before showing the menu modal and updating
                 setTimeout(() => {
-                    if (tap_difference) {
-                        if (tap_difference > 400) {
-                            if (seat.classList.contains('disabled')) return;
+                    // For touch events, use tap_difference logic
+                    if (e.pointerType === "touch" || e.type === "touchend" || typeof tap_difference !== "undefined") {
+                        if (tap_difference) {
+                            if (tap_difference > 400) {
+                                if (seat.classList.contains('disabled')) return;
 
-                            seats.forEach(s => s.classList.remove('selected'));
-                            seat.classList.add('selected');
-                            lastSelectedSeat = seat;
-                            if (showMenuModal && !seat.classList.contains("disabled")) showMenuModal();
-                            update(seat);
+                                seats.forEach(s => s.classList.remove('selected'));
+                                seat.classList.add('selected');
+                                lastSelectedSeat = seat;
+                                if (showMenuModal && !seat.classList.contains("disabled")) showMenuModal();
+                                update(seat);
+                            }
                         }
+                    } else {
+                        // For mouse clicks (PC)
+                        if (seat.classList.contains('disabled')) return;
+
+                        seats.forEach(s => s.classList.remove('selected'));
+                        seat.classList.add('selected');
+                        lastSelectedSeat = seat;
+                        if (showMenuModal && !seat.classList.contains("disabled")) showMenuModal();
+                        update(seat);
                     }
                 }, 405);
             });
@@ -695,7 +707,12 @@ document.addEventListener("DOMContentLoaded", () => {
     less_btns.forEach(btn => {
         btn.addEventListener('click', function () {
             let amount = btn.previousElementSibling;
-            if (parseInt(amount.textContent) > 0) {
+            let minimum = 0;
+            if(amount.parentElement.classList.contains("val"))
+            {
+                minimum = 1;
+            }
+            if (parseInt(amount.textContent) > minimum) {
                 amount.textContent = parseInt(amount.textContent) - 1;
                 if (amount.parentElement.classList.contains("val")) {
                     lastSelectedSeat.dataset.val = parseInt(amount.textContent);
