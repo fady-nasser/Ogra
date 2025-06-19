@@ -442,6 +442,15 @@ h1 {
 {
     font-weight: 700;
     font-size: 20px;
+    
+}
+.card-seat:not(.add, .disabled):not(.suggested) span
+{
+    display: initial !important;
+}
+.card-seat:not(.add, .disabled):not(.suggested) div
+{
+    display: none;
 }
 .card-seat.selected {
     border: 3px solid #FEAA23;
@@ -704,6 +713,12 @@ transition: 0.1s linear; }
     justify-content: space-around;
     gap: 10px;
     width: 100%;
+}
+.how-to
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .how-row
 {

@@ -1,3 +1,8 @@
+// Wait for the DOM to be fully loaded before running the script
+document.addEventListener("DOMContentLoaded", () => {
+    // --- DOM ELEMENTS ---
+    let lastSelectedSeat = null;
+    const seats_container = document.querySelector(".seats-container");
     // let seats = document.querySelectorAll('.card-seat:not(.driver, .add)');
     const input = document.querySelector('input[name="fare"]');
     const less_btns = document.querySelectorAll('.less');
@@ -5,7 +10,7 @@
     const menu = document.querySelector('.menu');
     const backdrop = document.querySelector('.backdrop');
     const close = document.querySelector('.close');
-    const amounts = document.querySelectorAll(".menu-modal .content .modal-body>div:not(.close, .val) .number");
+    const amounts = document.querySelectorAll(".menu-modal .content .modal-body>div:not(.close) .number");
     const add_btn = document.querySelector('.add');
     const collected_amount_btn = document.querySelector('.collected-div');
     const collected_amount_display = document.querySelector('.collected-amount');
@@ -14,9 +19,7 @@
     const add_seat = document.querySelector(".card-seat.add");
     const select = document.querySelector("select");
     let seats;
-    let hash = window.location.hash.substring(1);
-    let loadedFromTrip = false;
-    let seat_vals;
+    
     // --- CONSTANTS ---
     const money_values = [0.25, 0.5, 1, 5, 10, 20, 50, 100, 200];
 
@@ -27,218 +30,6 @@
     let coins_to_give_per_seat = [];
     const imgs = ["quarter.png", "half.png", "1.png", "5.png", "10.png", "20.png", "50.png", "100.png", "200.png"]
 
-let seats_num;
-
-// Wait for the DOM to be fully loaded before running the script
-document.addEventListener("DOMContentLoaded", () => {
-    // --- DOM ELEMENTS ---
-    let lastSelectedSeat = null;
-    const seats_container = document.querySelector(".seats-container");
-
-    // --- LOAD TRIP FROM LOCALSTORAGE IF INDEX IN HASH ---
-    function loadTripFromLocalStorageByIndex(tripIndex) {
-        let trips = [];
-        try {
-            trips = JSON.parse(localStorage.getItem("ogra_trips")) || [];
-        } catch (e) {
-            trips = [];
-        }
-        const trip = trips.find(t => t.index === tripIndex);
-        if (!trip) return false;
-
-        // Remove existing seats except .add
-        document.querySelectorAll('.seats-container div:not(.add)').forEach(seat => seat.remove());
-
-        // Restore seats
-            driver = document.createElement("div");
-                driver.classList.add("card-seat");
-                driver.classList.add("driver");
-                driver.classList.add("disabled");
-                driver.dataset.money = "0,0,0,0,0,0,0,0,0";
-                seats_container.insertBefore(driver, document.querySelector('.add'));
-            if(trip.selectedOption == '8')
-            {
-                space = document.createElement("div");
-                
-                seats_container.insertBefore(space, document.querySelector('.add'));
-            }
-        trip.seatData.forEach(seatInfo => {
-            const new_seat = document.createElement("div");
-            seatInfo.classes.forEach(cls => new_seat.classList.add(cls));
-            new_seat.dataset.money = seatInfo.money;
-            new_seat.dataset.val = seatInfo.seat_val;
-            console.log("molkahente"+seatInfo.seat_val);
-            const span = document.createElement("span");
-            span.textContent = seatInfo.paid;
-            new_seat.appendChild(span);
-            seats_container.insertBefore(new_seat, document.querySelector('.add'));
-        });
-
-        // Restore fare
-        input.value = trip.fare;
-
-        // Restore collected amount (UI only)
-        collected_amount_display.textContent = trip.collectedAmount;
-
-        // Restore change details (UI only)
-        details_displayed.forEach((el, i) => {
-            el.textContent = trip.changeDetails[i] || "0";
-        });
-
-        // Restore select value
-        select.value = trip.selectedOption;
-
-        // Update the trip index in localStorage so it doesn't keep reloading
-        localStorage.setItem("ogra_trip_index", trip.index);
-
-        seats = document.querySelectorAll('.card-seat:not(.driver, .add, .explain)');
-        update_seats();
-        update(seats[1]);
-        return true;
-    }
-
-
-
-    // --- LOCAL STORAGE SAVE/LOAD FUNCTIONS ---
-
-    // Save the current trip state to localStorage
-    function saveTripToLocalStorage() {
-        // Gather seat data
-        const seatData = Array.from(seats).map(seat => ({
-            money: seat.dataset.money, // e.g. "0,1,0,0,0,0,0,0,0"
-            classes: Array.from(seat.classList), // to know enabled/disabled
-            paid: seat.childNodes[0]?.textContent || "0", // amount paid
-            seat_val: seat.dataset.val,
-        }));
-
-        // Get fare value
-        const fare = input.value;
-        
-        // Get collected amount (from UI)
-        const collectedAmount = collected_amount_display.textContent;
-
-        // Get change details (from UI)
-        const changeDetails = Array.from(details_displayed).map(el => el.textContent);
-
-        // Get trip type (number of seats)
-        const tripType = seats.length;
-
-        // Get selected option in select element
-        const selectedOption = select.value;
-
-        // Get date
-        const date = new Date().toLocaleString("en-EG", {
-            timeZone: "Africa/Cairo",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true
-        });
-
-        // Get total collected change in denominations
-        const totalChangeArray = get_total_available_change();
-        const totalChange = {
-            total: change_to_money(totalChangeArray).total,
-            denominations: totalChangeArray
-        };
-
-        // Compose trip object
-        let trip = {
-            seatData,
-            fare,
-            collectedAmount,
-            changeDetails,
-            tripType,
-            selectedOption,
-            date,
-            totalChange
-        };
-
-        // Use an index to identify the current trip (based on a unique key)
-        // let tripIndex = localStorage.getItem("ogra_trip_index");
-        // let hash = window.location.hash.substring(1);
-
-        // Get existing trips from localStorage
-        let trips = [];
-        try {
-            trips = JSON.parse(localStorage.getItem("ogra_trips")) || [];
-        } catch (e) {
-            trips = [];
-        }
-
-        // Assign index to trip before checking for existing trip
-        hash = window.location.hash.substring(1);
-        let tripIndex = hash && hash.length > 0 ? hash : null;
-        // alert(tripIndex === "14");
-        if (!tripIndex || isNaN(tripIndex) || tripIndex === "14" ||  tripIndex === "8") {
-            // alert("AHHHHHh");
-            tripIndex = Date.now().toString();
-        }
-        trip.index = tripIndex;
-
-        // Check if trip with this index exists, update it, else push new
-        const existingIndex = trips.findIndex(t => t.index === tripIndex);
-        if (existingIndex !== -1) {
-            trips[existingIndex] = trip;
-        } else {
-            trips.push(trip);
-        }
-        window.location.hash = trip.index;
-
-        // Save back to localStorage
-        localStorage.setItem("ogra_trips", JSON.stringify(trips));
-    }
-
-    // // Load a trip from localStorage by index (for use in index page)
-    // function loadTripFromLocalStorage(index) {
-    //     let trips = [];
-    //     try {
-    //         trips = JSON.parse(localStorage.getItem("ogra_trips")) || [];
-    //     } catch (e) {
-    //         trips = [];
-    //     }
-    //     if (!trips[index]) return;
-
-    //     const trip = trips[index];
-
-    //     // Remove existing seats except driver, add, and explain
-    //     document.querySelectorAll('.seats-container div:not(.add)').forEach(seat => seat.remove());
-
-    //     // Restore seats
-    //     trip.seatData.forEach(seatInfo => {
-    //         const new_seat = document.createElement("div");
-    //         seatInfo.classes.forEach(cls => new_seat.classList.add(cls));
-    //         new_seat.dataset.money = seatInfo.money;
-    //         const span = document.createElement("span");
-    //         new_seat.appendChild(span);
-    //         seats_container.insertBefore(new_seat, add_btn);
-    //     });
-
-    //     // Restore fare
-    //     input.value = trip.fare;
-
-    //     // Restore collected amount (UI only)
-    //     collected_amount_display.textContent = trip.collectedAmount;
-
-    //     // Restore change details (UI only)
-    //     details_displayed.forEach((el, i) => {
-    //         el.textContent = trip.changeDetails[i] || "0";
-    //     });
-
-    //     seats = document.querySelectorAll('.card-seat:not(.driver, .add, .explain)');
-    //     update_seats();
-    // }
-
-    // Optionally, call saveTripToLocalStorage() after any major change
-    // For example, after updating seats or fare:
-    // saveTripToLocalStorage();
-
-    // Example: Save trip when user clicks a "Save Trip" button (add this button in your HTML)
-    // document.querySelector("#save-trip-btn").addEventListener("click", saveTripToLocalStorage);
-
-    // You can also call saveTripToLocalStorage() automatically after certain actions if desired.
     // --- UTILITY FUNCTIONS ---
 
     // Hide the menu and backdrop
@@ -281,16 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         seat.remove();
                         seats = document.querySelectorAll('.card-seat:not(.driver, .add, .explain)');
                         update_seats();
-
                     }, 600);
-                    update(seat);
                     return;
                 }
                 if (!suggestedSeats.has(i)) return;
                 tapTimeout = setTimeout(() => {
                     confirmSuggestion(i);
                 }, 600);
-                update(seat);
             });
             seat.addEventListener('mouseup', () => {
                 clearTimeout(tapTimeout);
@@ -307,14 +95,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         seats = document.querySelectorAll('.card-seat:not(.driver, .add, .explain)');
                         update_seats();
                     }, 600);
-                    update(seat);
                     return;
                 }
                 if (!suggestedSeats.has(i)) return;
                 tapTimeout = setTimeout(() => {
                     confirmSuggestion(i);
                 }, 600);
-                update(seat);
             });
             seat.addEventListener('touchend', () => {
                 clearTimeout(tapTimeout);
@@ -330,16 +116,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     seat.classList.add('disabled');
                 }
-                update(seat);
             });
 
             // Double tap to enable/disable seat (using a timer)
             let lastTap = 0;
-            let db_tap;
-            let tap_difference;
             seat.addEventListener('touchend', function (e) {
                 const currentTime = new Date().getTime();
-                tap_difference = currentTime - lastTap;
                 if (currentTime - lastTap < 400) {
                     if (seat.classList.contains('disabled')) {
                         seat.classList.remove('disabled');
@@ -347,10 +129,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         seat.classList.add('disabled');
                     }
                     e.preventDefault();
-                    db_tap = true;
                 }
                 lastTap = currentTime;
-                update(seat);
             });
 
             // Open menu on click
@@ -358,24 +138,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const showMenuModal = setupMenuModal();
 
             seat.addEventListener('click', function () {
-
-                // Wait 405ms before showing the menu modal and updating
-                setTimeout(() => {
-                if(tap_difference)
-                {
-                    if(tap_difference > 400)
-                    {
-                                                            if (seat.classList.contains('disabled')) return;
+                if (seat.classList.contains('disabled')) return;
 
                 seats.forEach(s => s.classList.remove('selected'));
                 seat.classList.add('selected');
                 lastSelectedSeat = seat;
+                // Wait 500ms before showing the menu modal and updating
+                setTimeout(() => {
                     if (showMenuModal && !seat.classList.contains("disabled")) showMenuModal();
                     update(seat);
-                    }
-                }
-
-                }, 405);
+                }, 500);
             });
 
         });
@@ -393,10 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const showMenuModal = () => {
         menuModal.classList.add("show");
-  document.body.style.overflow = 'hidden';
-  document.body.style.position = 'fixed';
-  document.body.style.width = '100%';
-    document.body.style.overflow = 'hidden';
+        document.body.style.overflowY = "hidden";
         menuContent.style.height = "50vh";
         menuModal.classList.remove("fullscreen");
     };
@@ -406,9 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const hideMenuModal = () => {
         menuModal.classList.remove("show");
-          document.body.style.overflow = '';
-  document.body.style.position = '';
-  document.body.style.width = '';
+        document.body.style.overflowY = "auto";
     };
     const dragStart = (e) => {
         isDragging = true;
@@ -476,20 +243,15 @@ seats.forEach((s, i) => {
 });
         // Parse the seat's money data and update the menu amounts
         let money_array = seat.dataset.money.split(',').map(Number);
-        
-        
-        value_amount = document.querySelector(".val");
-        let seat_value = parseInt(seat.dataset.val);
-        val.textContent = seat_value;
         amounts.forEach((amount, index) => {
             amount.textContent = money_array[index];
         });
 
         // Gather all seats' money arrays
-
         let money_arrays = Array.from(seats).map(s => s.dataset.money.split(',').map(Number));
         let total_change = new Array(money_arrays[0].length).fill(0);
-        seat_vals = Array.from(seats).map(s => parseInt(s.dataset.val));   // Calculate total coins/notes available for change
+
+        // Calculate total coins/notes available for change
         money_arrays.forEach(array => {
             array.forEach((value, index) => {
                 total_change[index] += value;
@@ -521,17 +283,11 @@ seats.forEach((s, i) => {
             input.classList.add('error');
             input.addEventListener('input', function () {
                 input.classList.remove('error');
-                                
-                            });
-                        }
-                        
-                    }
-                    // Update the first seat whenever the input value changes
-                    input.addEventListener('input', () => {
-                        
-                            update(seats[0]);
-                        
-                    });
+            });
+        }
+        
+    }
+
     // --- GREEDY CHANGE DISTRIBUTION ---
     function calculate(total_change_array) {
         let coins_available = [...total_change_array];
@@ -622,11 +378,9 @@ seats.forEach((s, i) => {
                         
                         vacant = document.createElement("div");
                         vacant.dataset.money = "0,0,0,0,0,0,0,0,0";
-                        vacant.dataset.val = "1";
-                        // vacant.data.value = 1;
+
                         vacant.classList.add("card-seat");
                         vacant.classList.add("disabled");
-                        vacant.classList.add("layer1");
                         span = document.createElement("span");
                         vacant.appendChild(span);
                          seats_container.insertBefore(vacant, add_btn);
@@ -638,9 +392,7 @@ seats.forEach((s, i) => {
                                             new_seat = document.createElement("div");
                                             new_seat.appendChild(span);
                     new_seat.classList.add("card-seat");
-                    new_seat.classList.add("layer1");
                     new_seat.dataset.money = "0,0,0,0,0,0,0,0,0";
-                    new_seat.dataset.val = "1";
                     seats_container.insertBefore(new_seat, add_btn);
                     }
                 }
@@ -651,7 +403,6 @@ seats.forEach((s, i) => {
                 new_seat.classList.add("driver");
                 new_seat.classList.add("disabled");
                 new_seat.dataset.money = "0,0,0,0,0,0,0,0,0";
-                new_seat.dataset.val = "1";
                 seats_container.insertBefore(new_seat, add_btn);
                 }
 
@@ -670,11 +421,11 @@ seats.forEach((s, i) => {
                 {
 if (i == 1) {
     vacant = document.createElement("div");
-    // vacant.dataset.money = "0,0,0,0,0,0,0,0,0";
-    // vacant.classList.add("card-seat");
-    // vacant.classList.add("disabled");
-    // span = document.createElement("span");
-    // vacant.appendChild(span);
+    vacant.dataset.money = "0,0,0,0,0,0,0,0,0";
+    vacant.classList.add("card-seat");
+    vacant.classList.add("disabled");
+    span = document.createElement("span");
+    vacant.appendChild(span);
     seats_container.insertBefore(vacant, add_btn);
     continue;
 }
@@ -682,11 +433,9 @@ if (i == 1) {
                     {
                                             new_seat = document.createElement("div");
                     new_seat.classList.add("card-seat");
-                    new_seat.classList.add("layer1");
                          span = document.createElement("span");
                         new_seat.appendChild(span);
                     new_seat.dataset.money = "0,0,0,0,0,0,0,0,0";
-                    new_seat.dataset.val = "1";
                     seats_container.insertBefore(new_seat, add_btn);
                     }
 
@@ -699,7 +448,6 @@ if (i == 1) {
                 new_seat.classList.add("driver");
                 new_seat.classList.add("disabled");
                 new_seat.dataset.money = "0,0,0,0,0,0,0,0,0";
-                new_seat.dataset.val = "1";
                 seats_container.insertBefore(new_seat, add_btn);
                 }
 
@@ -746,7 +494,6 @@ if (i == 1) {
     
         new_seat = document.createElement("div");
         new_seat.classList.add("card-seat");
-        new_seat.classList.add("layer1");
         new_seat.dataset.money = "0,0,0,0,0,0,0,0,0";
                                 span = document.createElement("span");
                         new_seat.appendChild(span);
@@ -757,20 +504,8 @@ if (i == 1) {
     
     });
 
-
-
-    // Check hash for trip index and load if found, else generate seats as usual
-    let hash = window.location.hash.substring(1);
-    let loadedFromTrip = false;
-    if (hash && !isNaN(hash) && hash.length > 8) { 
-        
-        loadedFromTrip = loadTripFromLocalStorageByIndex(hash);
-    }
-    else
-    {
-        
-            type = window.location.hash.substring(1);
-    
+    type = window.location.hash.substring(1);
+    let seats_num;
     if(type)
     {
         seats_num = parseInt(type);
@@ -780,11 +515,8 @@ if (i == 1) {
     {
         seats_num = 14;
     }
-    
     generate_seats();
-    }
 
-    
     update_seats();
         // --- AMOUNT BUTTON EVENTS ---
     less_btns.forEach(btn => {
@@ -792,16 +524,8 @@ if (i == 1) {
             let amount = btn.previousElementSibling;
             if (parseInt(amount.textContent) > 0) {
                 amount.textContent = parseInt(amount.textContent) - 1;
-            if(amount.parentElement.classList.contains("val"))
-            {
-                alert("AHHHHH");
-                lastSelectedSeat.dataset.val = parseInt(a.textContent);
-            }
-            else
-            {
-                            let money_array = Array.from(amounts).map(a => parseInt(a.textContent));
-            lastSelectedSeat.dataset.money = money_array.join(',');
-            }   
+                let money_array = Array.from(amounts).map(a => parseInt(a.textContent));
+                lastSelectedSeat.dataset.money = money_array.join(',');
                 update(lastSelectedSeat);
             }
         });
@@ -809,19 +533,10 @@ if (i == 1) {
 
     more_btns.forEach(btn => {
         btn.addEventListener('click', function () {
-
             let amount = btn.nextElementSibling;
             amount.textContent = parseInt(amount.textContent) + 1;
-            if(amount.parentElement.classList.contains("val"))
-            {
-                lastSelectedSeat.dataset.val = parseInt(a.textContent);
-            }
-            else
-            {
-                            let money_array = Array.from(amounts).map(a => parseInt(a.textContent));
+            let money_array = Array.from(amounts).map(a => parseInt(a.textContent));
             lastSelectedSeat.dataset.money = money_array.join(',');
-            }   
-
             update(lastSelectedSeat);
         });
     });
@@ -861,9 +576,7 @@ let isDragging = false, startY, startHeight;
 // Show the bottom sheet, hide body vertical scrollbar, and call updateSheetHeight
 const showhow_to_modal = () => {
     how_to_modal.classList.add("show");
-      document.body.style.overflow = 'hidden';
-  document.body.style.position = 'fixed';
-  document.body.style.width = '100%';
+    document.body.style.overflowY = "hidden";
     updateSheetHeight(50);
 }
 const updateSheetHeight = (height) => {
@@ -874,9 +587,7 @@ const updateSheetHeight = (height) => {
 // Hide the bottom sheet and show body vertical scrollbar
 const hidehow_to_modal = () => {
     how_to_modal.classList.remove("show");
-      document.body.style.overflow = '';
-  document.body.style.position = '';
-  document.body.style.width = '';
+    document.body.style.overflowY = "auto";
 }
 // Sets initial drag position, modal_content height and add dragging class to the bottom sheet
 const dragStart = (e) => {
@@ -908,51 +619,6 @@ document.addEventListener("touchmove", dragging);
 document.addEventListener("touchend", dragStop);
 modal_overlay.addEventListener("click", hidehow_to_modal);
 how_to_btn.addEventListener("click", showhow_to_modal);
-
-
-    // saveTripToLocalStorage();
-    // if (localStorage.getItem('ogra_trips'))
-    // {
-    //     console.log(localStorage.getItem('ogra_trips'));
-    // }
-
-document.addEventListener("click", () =>
-{
-    all_images = document.querySelectorAll("img");
-    all_images.forEach(image => {
-        image.draggable = false;
-       
-
-image.addEventListener('contextmenu', (e) => {
-  e.preventDefault(); // Prevent right-click and long-press menu
-});
-
-image.addEventListener('touchstart', (e) => {
-  e.preventDefault(); // Prevent long-press on touch devices
-});
-    });
-        saveTripToLocalStorage();
-    if (localStorage.getItem('ogra_trips'))
-    {
-        console.log(localStorage.getItem('ogra_trips'));
-    }
-seats.forEach(seat => {
-    if(seat.innerText == "0")
-    {
-        seat.querySelector("span").style.color = "transparent";
-    }
-    else
-    {
-        seat.querySelector("span").style.color = "inherit";
-    }
-
-});
-});
-// setInterval(() => {
-    
-//     // update(seats[1]);
-// }, 500);
-
 
 // --------------------------------
 
